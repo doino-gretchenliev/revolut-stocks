@@ -1,0 +1,36 @@
+[tool.black]
+line-length = 120
+target-version = ['py38']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+)
+'''
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.design]
+max-branches = 25
+max-args = 15
+max-locals = 35
+max-attributes = 30
+max-statements = 100
+min-public-methods = 0
+
+[tool.pylint.reports]
+reports = "no"
+score = "yes"
+output-format = "colorized"

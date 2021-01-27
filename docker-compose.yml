@@ -1,0 +1,10 @@
+version: '3'
+services:
+  revolut-stocks-calc:
+    image: revolut-stocks-calc
+    build:
+      context: .
+    command: -i /input -o /output
+    volumes:
+      - <path_to_input_dir>:/input:ro
+      - <path_to_output_dir>:/output
