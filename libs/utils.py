@@ -12,8 +12,10 @@ def list_statement_files(dir):
     if not os.path.exists(dir):
         raise Exception(f"Statement directory[{dir}] doesn't exists.")
 
-    expresion = os.path.join(dir, "**", f"*.pdf")
-    for file in glob.glob(expresion, recursive=True):
+    expresion_pdf = os.path.join(dir, "**", f"*.pdf")
+    expresion_csv = os.path.join(dir, "**", f"*.csv")
+
+    for file in glob.glob(expresion_pdf, recursive=True) + glob.glob(expresion_csv, recursive=True):
         if not os.path.isfile(file):
             continue
         statement_files.append(file)

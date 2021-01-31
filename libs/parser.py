@@ -3,6 +3,7 @@ from pdfreader import PDFDocument, SimplePDFViewer
 from pdfreader.viewer import PageDoesNotExist
 from datetime import datetime, timedelta
 import decimal
+import csv
 
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
@@ -11,6 +12,7 @@ from libs import (
     REVOLUT_ACTIVITY_TYPES,
     REVOLUT_CASH_ACTIVITY_TYPES,
     REVOLUT_ACTIVITIES_PAGES_INDICATORS,
+    TRADING212_ACTIVITY_TYPES
 )
 
 
@@ -73,7 +75,7 @@ def extract_activity(begin_index, page_strings, num_fields):
     return activity
 
 
-def extract_activities(viewer):
+def extract_activities_from_pdf(viewer):
     activities = []
 
     while True:
@@ -101,6 +103,34 @@ def extract_activities(viewer):
     return activities
 
 
+def extract_activities_from_csv(reader):
+    activities = []
+
+    for index, row in enumerate(reader):
+        if index < 1:
+            continue
+
+        if not row:
+            continue
+
+        if row[0] in TRADING212_ACTIVITY_TYPES:
+            activity = {
+                "trade_date": datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S'),
+                "settle_date": '-',
+                "currency": row[7],
+                "activity_type": REVOLUT_ACTIVITY_TYPES[TRADING212_ACTIVITY_TYPES.index(row[0])],
+                "symbol_description": row[4] + " " + row[2],
+                "symbol": row[3],
+                "quantity": decimal.Decimal(row[5]),
+                "price": decimal.Decimal(row[6]),
+                "amount": decimal.Decimal(clean_number(row[10]))
+            }
+
+            activities.append(activity)
+
+    return activities
+
+
 def find_place_position(statements, date):
     pos = 0
     for statement in statements:
@@ -116,12 +146,21 @@ def parse_statements(statement_files):
     statements = []
 
     for statement_file in statement_files:
-        with open(statement_file, "rb") as fd:
-            viewer = SimplePDFViewer(fd)
-            activities = extract_activities(viewer)
-            if not activities:
-                continue
-            statements.append(activities)
+        activities = []
+
+        if statement_file.endswith('.pdf'):
+            with open(statement_file, "rb") as fd:
+                viewer = SimplePDFViewer(fd)
+                activities = extract_activities_from_pdf(viewer)
+        elif statement_file.endswith('.csv'):
+            with open(statement_file, "r") as fd:
+                viewer = csv.reader(fd, delimiter=",")
+                activities = extract_activities_from_csv(viewer)
+
+        if not activities:
+            continue
+
+        statements.append(activities)
 
     statements = sorted(statements, key=lambda k: k[0]["trade_date"])
     return [activity for activities in statements for activity in activities]
