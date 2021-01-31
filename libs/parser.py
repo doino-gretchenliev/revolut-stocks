@@ -15,8 +15,8 @@ from libs import (
 
 
 def get_activity_range(page_strings):
-    begin_index = None
-    end_index = None
+    begin_index = 0
+    end_index = 0
     for index, page_string in enumerate(page_strings):
         if page_string == "Amount":
             begin_index = index
