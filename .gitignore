@@ -133,5 +133,8 @@ test-input
 test-output
 test-input-personal
 
+# Support scripts
+get_exchange_rates.py
+
 #VS code
 .vscode

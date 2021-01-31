@@ -22,6 +22,7 @@ parser.add_argument(
     help="Output directory for csv files. Directory will be populated with NAP calculations and verification documents in csv format.",
     required=True,
 )
+parser.add_argument("-b", dest="use_bnb", help="Use BNB online service as exchange rates source.", action="store_true")
 parser.add_argument("-v", dest="verbose", help="Enable verbose output.", action="store_true")
 parsed_args = parser.parse_args()
 
@@ -47,7 +48,7 @@ def main():
     export_statements(os.path.join(parsed_args.output_dir, "statements.csv"), statements)
 
     logger.info(f"Populating exchange rates.")
-    populate_exchange_rates(statements)
+    populate_exchange_rates(statements, parsed_args.use_bnb)
 
     logger.info(f"Generating [app8-part1.csv] file.")
     export_app8_part1(os.path.join(parsed_args.output_dir, "app8-part1.csv"), statements)
