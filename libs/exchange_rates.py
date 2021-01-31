@@ -5,6 +5,9 @@ import urllib.request
 from urllib.parse import urlencode
 from datetime import datetime, timedelta
 import decimal
+import logging
+
+logger = logging.getLogger("exchange_rates")
 
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
@@ -12,6 +15,8 @@ from libs import BNB_BASE_URL, BNB_DATE_FORMAT, BNB_SPLIT_BY_MONTHS, BNB_CSV_HEA
 
 
 def query_exchange_rates(first_date, last_date):
+    logger.debug(f"Obtaining exchange rate from date range: [{first_date}] - [{last_date}]")
+
     params = {
         "downloadOper": "true",
         "group1": "second",
@@ -30,23 +35,29 @@ def query_exchange_rates(first_date, last_date):
     params["periodEndMonths"] = "{:02d}".format(last_date.month)
     params["periodEndYear"] = last_date.year
 
-    response = urllib.request.urlopen(BNB_BASE_URL + urlencode(params))
-    data = response.read()
-    text = data.decode("utf-8")
-
-    f = StringIO(text)
-    reader = csv.reader(f, delimiter=",")
     exchange_rates = {}
+    try:
+        response = urllib.request.urlopen(BNB_BASE_URL + urlencode(params))
 
-    for index, row in enumerate(reader):
-        if index < BNB_CSV_HEADER_ROWS:
-            continue
+        data = response.read()
+        text = data.decode("utf-8")
 
-        if not row:
-            continue
+        fd = StringIO(text)
 
-        date = datetime.strptime(row[0], BNB_DATE_FORMAT)
-        exchange_rates[date] = decimal.Decimal(row[3].strip())
+        reader = csv.reader(fd, delimiter=",")
+
+        for index, row in enumerate(reader):
+            if index < BNB_CSV_HEADER_ROWS:
+                continue
+
+            if not row:
+                continue
+
+            date = datetime.strptime(row[0], BNB_DATE_FORMAT)
+            exchange_rates[date] = decimal.Decimal(row[3].strip())
+    except Exception:
+        logging.exception(f"Unable to get exchange rate from BNB. Please, try again later.")
+        raise SystemExit(1)
 
     return exchange_rates
 

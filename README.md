@@ -36,7 +36,7 @@ Revolut Stock calculator is able to parse Revolut statement documents and provid
 
 #### Run
 
-`python stock.py -i <path_to_input_dir> -o <path_to_output_dir>`
+`python stocks.py -i <path_to_input_dir> -o <path_to_output_dir>`
 
 **Output**:
 ```sh
@@ -75,6 +75,27 @@ Replace `<path_to_input_dir>` and `<path_to_output_dir>` placeholders in the `do
 | `app5-table2.csv`     | `Приложение 5, Таблица 2`                                                        |                                                                           |
 | `app8-part1.csv`      | `Приложение 8, Част ІV, 1`                                                       |                                                                           |
 | `app8-part4-1.csv`    | `Приложение 8, Част І`                                                           |                                                                           |
+
+## Errors
+
+Errors are being reported along with an `ERROR` label. For example:
+```sh
+[ERROR]: Unable to get exchange rate from BNB. Please, try again later.
+Traceback (most recent call last):
+  File "/mnt/c/Users/doino/Personal/revolut-stocks/libs/exchange_rates.py", line 57, in query_exchange_rates
+    date = datetime.strptime(row[0], BNB_DATE_FORMAT)
+  File "/usr/lib/python3.8/_strptime.py", line 568, in _strptime_datetime
+    tt, fraction, gmtoff_fraction = _strptime(data_string, format)
+  File "/usr/lib/python3.8/_strptime.py", line 349, in _strptime
+    raise ValueError("time data %r does not match format %r" %
+ValueError: time data ' ' does not match format '%d.%m.%Y'
+```
+
+Please, check the latest reported error in the log for more information.
+
+### "Unable to get exchange rate from BNB."
+
+The error indicates that there was an issue obtaining the exchange rate from BNB online service. Please, test BNB online service manually [here](https://www.bnb.bg/Statistics/StExternalSector/StExchangeRates/StERForeignCurrencies/index.htm?search=true), before reporting an issue.
 
 ## Import
 

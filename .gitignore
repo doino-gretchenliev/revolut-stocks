@@ -131,6 +131,7 @@ dmypy.json
 # Test files
 test-input
 test-output
+test-input-personal
 
 #VS code
 .vscode
