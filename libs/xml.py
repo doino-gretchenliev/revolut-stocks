@@ -13,8 +13,8 @@ def save_to_xml(tree, filename):
 def generate_app5_table2(dec50, sales):
     app5 = etree.SubElement(dec50, "app5")
     table2 = etree.SubElement(app5, "table2")
-    total_profit = 0
-    total_loss = 0
+    total_profit = decimal.Decimal(0)
+    total_loss = decimal.Decimal(0)
     for sale in sales:
         rowenum = etree.SubElement(table2, "rowenum")
         etree.SubElement(rowenum, "code").text = "508"

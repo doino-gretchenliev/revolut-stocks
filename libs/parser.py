@@ -2,7 +2,9 @@ import pdfreader
 from pdfreader import PDFDocument, SimplePDFViewer
 from pdfreader.viewer import PageDoesNotExist
 from datetime import datetime, timedelta
+import logging
 import decimal
+
 
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
@@ -13,12 +15,19 @@ from libs import (
     REVOLUT_ACTIVITIES_PAGES_INDICATORS,
 )
 
+logger = logging.getLogger("parser")
+
+
+class ActivitiesNotFound(Exception):
+    pass
+
 
 def get_activity_range(page_strings):
     begin_index = None
     end_index = None
+
     for index, page_string in enumerate(page_strings):
-        if page_string == "Amount":
+        if page_string == "ACTIVITY":
             begin_index = index
             continue
 
@@ -26,6 +35,13 @@ def get_activity_range(page_strings):
             end_index = index
             break
 
+    if begin_index is None:
+        raise ActivitiesNotFound()
+
+    if end_index is None:
+        end_index = len(page_strings)
+
+    logger.debug(f"Found begin index: [{begin_index}] and end index: [{end_index}]")
     return begin_index + 1, end_index
 
 
@@ -80,18 +96,26 @@ def extract_activities(viewer):
         viewer.render()
         page_strings = viewer.canvas.strings
 
-        if page_strings and page_strings[0] in REVOLUT_ACTIVITIES_PAGES_INDICATORS:
-            begin_index, end_index = get_activity_range(page_strings)
-            page_strings = page_strings[begin_index:end_index]
-            for index, page_string in enumerate(page_strings):
-                if page_string in REVOLUT_ACTIVITY_TYPES:
-                    activity = extract_activity(index - 3, page_strings, 8)
-                elif page_string in REVOLUT_CASH_ACTIVITY_TYPES:
-                    activity = extract_activity(index - 3, page_strings, 6)
-                else:
-                    continue
+        logger.debug(f"Parsing page [{viewer.current_page_number}]")
 
-                activities.append(activity)
+        if page_strings:
+            logger.debug(f"First string on the page: [{page_strings[0]}]")
+
+            if page_strings[0] in REVOLUT_ACTIVITIES_PAGES_INDICATORS:
+                try:
+                    begin_index, end_index = get_activity_range(page_strings)
+                    page_strings = page_strings[begin_index:end_index]
+                    for index, page_string in enumerate(page_strings):
+                        if page_string in REVOLUT_ACTIVITY_TYPES:
+                            activity = extract_activity(index - 3, page_strings, 8)
+                        elif page_string in REVOLUT_CASH_ACTIVITY_TYPES:
+                            activity = extract_activity(index - 3, page_strings, 6)
+                        else:
+                            continue
+
+                        activities.append(activity)
+                except ActivitiesNotFound:
+                    pass
 
         try:
             viewer.next()
@@ -116,6 +140,8 @@ def parse_statements(statement_files):
     statements = []
 
     for statement_file in statement_files:
+        logger.debug(f"Processing statement file[{statement_file}]")
+
         with open(statement_file, "rb") as fd:
             viewer = SimplePDFViewer(fd)
             activities = extract_activities(viewer)

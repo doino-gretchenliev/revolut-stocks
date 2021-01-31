@@ -5,7 +5,7 @@ import logging
 from libs.exchange_rates import populate_exchange_rates
 from libs.calculations import calculate_win_loss, calculate_dividends
 from libs.parser import parse_statements
-from libs.utils import list_statement_files
+from libs.utils import list_statement_files, get_unsupported_activity_types
 from libs.csv import export_statements, export_app8_part1, export_app5_table2, export_app8_part4_1
 from libs.xml import export_to_xml
 
@@ -29,6 +29,7 @@ parsed_args = parser.parse_args()
 if parsed_args.verbose:
     logging.getLogger("calculations").setLevel(level=logging.DEBUG)
     logging.getLogger("exchange_rates").setLevel(level=logging.DEBUG)
+    logging.getLogger("parser").setLevel(level=logging.DEBUG)
 
 
 def main():
@@ -46,6 +47,17 @@ def main():
 
     logger.info(f"Generating [statements.csv] file.")
     export_statements(os.path.join(parsed_args.output_dir, "statements.csv"), statements)
+
+    if not statements:
+        logger.error(f"Not activities found. Please, check your statement files.")
+        raise SystemExit(1)
+
+    unsupported_activity_types = get_unsupported_activity_types(statements)
+    if unsupported_activity_types:
+        logger.error(
+            f"Statements contain unsupported activity types: {unsupported_activity_types}. Please, check documentation."
+        )
+        raise SystemExit(1)
 
     logger.info(f"Populating exchange rates.")
     populate_exchange_rates(statements, parsed_args.use_bnb)

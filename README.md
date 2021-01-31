@@ -21,6 +21,7 @@ Revolut Stock calculator is able to parse Revolut statement documents and provid
 2. Revolut doesn't provide information about which exact stock asset is being sold during a sale. As currently indicated at the end of each statement file, the default tax lot disposition method is `First-In, First-Out`. The calculator is developed according to that rule.
 3. The trade date(instead of the settlement date) is being used for every calculation. The decision is based on the fact that the Revolut stock platform makes the cash available immediately after the initiation of a stock sale. Although the cash can't be withdrawn, it could be **used** in making other deals and so it's assumed that the transfer is finished from a user perspective.
 4. By default the calculator uses locally cached exchange rates located [here](https://github.com/doino-gretchenliev/revolut-stocks/tree/main/exchange_rates). If want you can select BNB online service as exchange rates provider by enabling the `-b` flag. When activating BNB online service provider, make sure you do not spam the BNB service with too many requests. Each execution makes around 3-5 requests.
+5. The calculator currently doesn't support `SSP` activities. Parsing supports all activity types, so `statements.csv` would be generated correctly. Full support is in development.
 
 ## Requirements
 

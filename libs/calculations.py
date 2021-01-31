@@ -59,7 +59,13 @@ def calculate_win_loss(statements):
                 f"[New sale] [{stock_symbol}] td:[{statement['trade_date']}] qt:[{activity_quantity}] pr:[{statement['price']}] ex:[{statement['exchange_rate']}]"
             )
 
+            if stock_symbol not in purchases or len(purchases[stock_symbol]) == 0:
+                logging.warn(f"No purchase information found for: [{stock_symbol}].")
+                continue
+
             stock_queue = purchases[stock_symbol]
+
+            logger.debug(f"Before adjustment: {stock_queue}")
 
             avg_purchase_price = get_avg_purchase_price(stock_queue)
             logger.debug(f"AVG price: [{avg_purchase_price}]")
@@ -74,8 +80,8 @@ def calculate_win_loss(statements):
                 "purchase_price": purchase_price.quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
                 "sell_price": sell_price.quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
                 "sell_exchange_rate": statement["exchange_rate"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
-                "profit": 0,
-                "loss": 0,
+                "profit": decimal.Decimal(0),
+                "loss": decimal.Decimal(0),
             }
 
             profit_loss = (sale["sell_price"] - sale["purchase_price"]).quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
@@ -86,7 +92,6 @@ def calculate_win_loss(statements):
 
             sales.append(sale)
 
-            logger.debug(f"Before adjustment: {stock_queue }")
             adjust_quantity(stock_queue, activity_quantity)
             logger.debug(f"After adjustment: {purchases[stock_symbol]}")
 
