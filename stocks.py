@@ -27,6 +27,7 @@ parsed_args = parser.parse_args()
 
 if parsed_args.verbose:
     logging.getLogger("calculations").setLevel(level=logging.DEBUG)
+    logging.getLogger("exchange_rates").setLevel(level=logging.DEBUG)
 
 
 def main():
