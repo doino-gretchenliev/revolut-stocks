@@ -21,7 +21,6 @@ Revolut Stock calculator is able to parse Revolut statement documents and provid
 2. Revolut doesn't provide information about which exact stock asset is being sold during a sale. As currently indicated at the end of each statement file, the default tax lot disposition method is `First-In, First-Out`. The calculator is developed according to that rule.
 3. The trade date(instead of the settlement date) is being used for every calculation. The decision is based on the fact that the Revolut stock platform makes the cash available immediately after the initiation of a stock sale. Although the cash can't be withdrawn, it could be **used** in making other deals and so it's assumed that the transfer is finished from a user perspective.
 4. By default the calculator uses locally cached exchange rates located [here](https://github.com/doino-gretchenliev/revolut-stocks/tree/main/exchange_rates). If want you can select BNB online service as exchange rates provider by enabling the `-b` flag. When activating BNB online service provider, make sure you do not spam the BNB service with too many requests. Each execution makes around 3-5 requests.
-5. The calculator currently doesn't support `SSP` activities. Parsing supports all activity types, so `statements.csv` would be generated correctly. Full support is in development.
 
 ## Requirements
 
@@ -95,9 +94,25 @@ ValueError: time data ' ' does not match format '%d.%m.%Y'
 
 Please, check the latest reported error in the log for more information.
 
-### "Unable to get exchange rate from BNB."
+### "Unable to get exchange rate from BNB"
 
 The error indicates that there was an issue obtaining the exchange rate from BNB online service. Please, test BNB online service manually [here](https://www.bnb.bg/Statistics/StExternalSector/StExchangeRates/StERForeignCurrencies/index.htm?search=true), before reporting an issue.
+
+### "No statement files found"
+
+There was an issue finding input statement files. Please, check your input directory configuration and file permissions.
+
+### "Not activities found. Please, check your statement files"
+
+The calculator parser was unable to parse any activities within your statement file. Please, check your statement files and ensure there are reported activities. If there are reported activities, but the error still persists, please open an issue.
+
+## "Statements contain unsupported activity types"
+
+The calculator found unsupported activity type/s. Please, open an issue and include the reported activity type.
+
+## "Unable to find previously purchased shares to surrender as part of SSP"
+
+The calculator, while trying to perform the SSP surrender shares operation, was unable to find the previously purchased shares for the same stock symbol. Please, ensure there is a statement file in the input directory, containing the original purchase.
 
 ## Import
 

@@ -12,6 +12,7 @@ from libs import (
     REVOLUT_DATE_FORMAT,
     REVOLUT_ACTIVITY_TYPES,
     REVOLUT_CASH_ACTIVITY_TYPES,
+    REVOLUT_OUT_OF_ORDER_ACTIVITY_TYPES,
     REVOLUT_ACTIVITIES_PAGES_INDICATORS,
 )
 
@@ -125,15 +126,10 @@ def extract_activities(viewer):
     return activities
 
 
-def find_place_position(statements, date):
-    pos = 0
-    for statement in statements:
-        if statement["trade_date"] > date:
-            break
-
-        pos += 1
-
-    return pos
+def get_first_non_ssp_activity_index(statements):
+    for index, statement in enumerate(statements):
+        if statement["activity_type"] not in REVOLUT_OUT_OF_ORDER_ACTIVITY_TYPES:
+            return index
 
 
 def parse_statements(statement_files):
@@ -149,5 +145,5 @@ def parse_statements(statement_files):
                 continue
             statements.append(activities)
 
-    statements = sorted(statements, key=lambda k: k[0]["trade_date"])
+    statements = sorted(statements, key=lambda k: k[get_first_non_ssp_activity_index(k)]["trade_date"])
     return [activity for activities in statements for activity in activities]

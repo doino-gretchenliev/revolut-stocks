@@ -42,11 +42,12 @@ def calculate_win_loss(statements):
     sales = []
     for statement in statements:
         stock_symbol = statement.get("symbol", None)
-        activity_quantity = abs(statement.get("quantity", 0))
 
         if statement["activity_type"] == "BUY":
+            activity_quantity = abs(statement.get("quantity", 0))
+
             logger.debug(
-                f"[New purchase] [{stock_symbol}] td:[{statement['trade_date']}] qt:[{activity_quantity}] pr:[{statement['price']}] ex:[{statement['exchange_rate']}]"
+                f"[BUY] [{stock_symbol}] td:[{statement['trade_date']}] qt:[{activity_quantity}] pr:[{statement['price']}] ex:[{statement['exchange_rate']}]"
             )
             stock_queue = purchases.get(stock_symbol, deque())
             stock_queue.append(
@@ -55,8 +56,10 @@ def calculate_win_loss(statements):
             purchases[stock_symbol] = stock_queue
 
         if statement["activity_type"] == "SELL":
+            activity_quantity = abs(statement.get("quantity", 0))
+
             logger.debug(
-                f"[New sale] [{stock_symbol}] td:[{statement['trade_date']}] qt:[{activity_quantity}] pr:[{statement['price']}] ex:[{statement['exchange_rate']}]"
+                f"[SELL] [{stock_symbol}] td:[{statement['trade_date']}] qt:[{activity_quantity}] pr:[{statement['price']}] ex:[{statement['exchange_rate']}]"
             )
 
             if stock_symbol not in purchases or len(purchases[stock_symbol]) == 0:
@@ -94,6 +97,34 @@ def calculate_win_loss(statements):
 
             adjust_quantity(stock_queue, activity_quantity)
             logger.debug(f"After adjustment: {purchases[stock_symbol]}")
+
+        if statement["activity_type"] == "SSP" or statement["activity_type"] == "MAS":
+            activity_type = statement["activity_type"]
+            activity_quantity = statement["quantity"]
+            logger.debug(
+                f"[{activity_type}] [{stock_symbol}] td:[{statement['trade_date']}] qt:[{activity_quantity}] pr:[{statement['price']}] ex:[{statement['exchange_rate']}]"
+            )
+
+            if activity_quantity < 0:
+                stock_symbol = stock_symbol.replace(".OLD", "")
+                if stock_symbol not in purchases or len(purchases[stock_symbol]) == 0:
+                    logging.warn(f"No purchase information found for: [{stock_symbol}].")
+                    continue
+
+                stock_queue = purchases[stock_symbol]
+                logger.debug(f"Before surrender: {stock_queue}")
+
+                adjust_quantity(stock_queue, abs(activity_quantity))
+                logger.debug(f"After surrender: {stock_queue}")
+                continue
+
+            stock_queue = purchases.get(stock_symbol, deque())
+            logger.debug(f"Before addition: {stock_queue}")
+
+            stock_queue.append(
+                {"price": statement["price"] * statement["exchange_rate"], "quantity": activity_quantity}
+            )
+            logger.debug(f"After addition: {stock_queue}")
 
     return sales
 
