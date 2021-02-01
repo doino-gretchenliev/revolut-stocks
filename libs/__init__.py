@@ -1,8 +1,9 @@
 REVOLUT_DATE_FORMAT = "%m/%d/%Y"
-REVOLUT_ACTIVITY_TYPES = ["SELL", "BUY", "SELL", "BUY", "DIV", "DIVNRA"]
+REVOLUT_ACTIVITY_TYPES = ["SELL", "BUY", "SELL", "BUY", "DIV", "DIVNRA", "SSP"]
 TRADING212_ACTIVITY_TYPES = ["Market sell", "Market buy", "Limit sell", "Limit buy"]
+REVOLUT_UNSUPPORTED_ACTIVITY_TYPES = ["SSP"]
 REVOLUT_CASH_ACTIVITY_TYPES = ["CDEP", "CSD"]
-REVOLUT_ACTIVITIES_PAGES_INDICATORS = ["Balance Summary", "ACTIVITY"]
+REVOLUT_ACTIVITIES_PAGES_INDICATORS = ["Balance Summary", "ACTIVITY", "Equity"]
 REVOLUT_DIGIT_PRECISION = "0.00000001"
 
 BNB_BASE_URL = "https://www.bnb.bg/Statistics/StExternalSector/StExchangeRates/StERForeignCurrencies/index.htm?"

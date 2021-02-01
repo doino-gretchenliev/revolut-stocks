@@ -4,6 +4,8 @@ from dateutil.relativedelta import relativedelta
 import urllib.request
 from urllib.parse import urlencode
 from datetime import datetime, timedelta
+import json
+import os
 import decimal
 import logging
 
@@ -77,14 +79,37 @@ def get_exchange_rates(first_date, last_date):
     return exchange_rates
 
 
+def load_exchange_rates():
+    exchange_rates = {}
+
+    exchange_rates_dir = os.path.dirname(os.path.realpath(__file__))
+    exchange_rates_file = os.path.join(exchange_rates_dir, "exchange_rates.json")
+
+    dates = {}
+    with open(exchange_rates_file, "r") as fd:
+        dates = json.load(fd)
+
+    for date, exchange_rate in dates.items():
+        date = datetime.strptime(date, BNB_DATE_FORMAT)
+        exchange_rates[date] = decimal.Decimal(exchange_rate)
+
+    return exchange_rates
+
+
 def find_last_published_exchange_rate(exchange_rates, search_date):
     return min(exchange_rates.keys(), key=lambda date: abs(date - search_date))
 
 
-def populate_exchange_rates(statements):
+def populate_exchange_rates(statements, use_bnb):
     first_date = statements[0]["trade_date"]
     last_date = statements[-1]["trade_date"]
-    exchange_rates = get_exchange_rates(first_date, last_date)
+
+    exchange_rates = {}
+    if use_bnb:
+        exchange_rates = get_exchange_rates(first_date, last_date)
+    else:
+        exchange_rates = load_exchange_rates()
+
     for statement in statements:
         if statement["trade_date"] in exchange_rates:
             statement["exchange_rate"] = exchange_rates[statement["trade_date"]]
