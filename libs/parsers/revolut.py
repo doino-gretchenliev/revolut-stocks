@@ -2,6 +2,7 @@ import pdfreader
 from pdfreader import PDFDocument, SimplePDFViewer
 from pdfreader.viewer import PageDoesNotExist
 from datetime import datetime, timedelta
+import re
 import logging
 import decimal
 
@@ -67,6 +68,13 @@ class Parser(StatementFilesParser):
     def clean_number(self, number_string):
         return number_string.replace("(", "").replace(")", "").replace(",", "")
 
+    def get_stock_company(self, symbol_description):
+        first_sep_index = symbol_description.index("-") + 1
+        company = symbol_description[first_sep_index:]
+        second_sep_index = company.index("-")
+
+        return re.sub(r"\s{2,}", " ", company[:second_sep_index].strip())
+
     def extract_activity(self, begin_index, page_strings, num_fields):
         end_index, symbol, symbol_description = self.extract_symbol_description(begin_index + 4, page_strings)
 
@@ -83,6 +91,7 @@ class Parser(StatementFilesParser):
             activity["quantity"] = decimal.Decimal(page_strings[end_index])
             activity["price"] = decimal.Decimal(page_strings[end_index + 1])
             activity["amount"] = page_strings[end_index + 2]
+            activity["company"] = self.get_stock_company(symbol_description)
         elif num_fields == 6:
             activity["amount"] = page_strings[end_index]
 

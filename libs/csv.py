@@ -35,6 +35,7 @@ def export_statements(filename, statements):
             "settle_date",
             "currency",
             "activity_type",
+            "company",
             "symbol_description",
             "symbol",
             "quantity",

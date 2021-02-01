@@ -1,5 +1,4 @@
 from libs import NAP_DIGIT_PRECISION, BNB_DATE_FORMAT, NAP_DATE_FORMAT
-import re
 from collections import deque
 import logging
 
@@ -139,14 +138,6 @@ def calculate_win_loss(statements):
     return sales, purchases
 
 
-def stock_company(statement):
-    first_sep_index = statement["symbol_description"].index("-") + 1
-    company = statement["symbol_description"][first_sep_index:]
-    second_sep_index = company.index("-")
-
-    return re.sub(r"\s{2,}", " ", company[:second_sep_index].strip())
-
-
 def calculate_dividends(statements):
     dividends = {}
     for statement in statements:
@@ -160,7 +151,7 @@ def calculate_dividends(statements):
                     continue
 
                 dividends[stock_symbol] = {
-                    "company": stock_company(statement),
+                    "company": statement["company"],
                     "gross_profit_amount": activity_amount,
                 }
                 continue
@@ -173,7 +164,7 @@ def calculate_dividends(statements):
                     continue
 
                 dividends[stock_symbol] = {
-                    "company": stock_company(statement),
+                    "company": statement["company"],
                     "gross_profit_amount": activity_amount,
                     "paid_tax_amount": activity_amount,
                 }
