@@ -1,4 +1,4 @@
-from libs import REVOLUT_DIGIT_PRECISION, NAP_DIGIT_PRECISION, BNB_DATE_FORMAT, NAP_DATE_FORMAT
+from libs import NAP_DIGIT_PRECISION, BNB_DATE_FORMAT, NAP_DATE_FORMAT
 import re
 from collections import deque
 import logging

@@ -40,6 +40,10 @@ Revolut Stock calculator is able to parse Revolut statement documents and provid
 
 `python stocks.py -i <path_to_input_dir> -o <path_to_output_dir>`
 
+#### Help
+
+`python stocks.py -h`
+
 **Output**:
 ```sh
 [INFO]: Collecting statement files.
