@@ -106,11 +106,11 @@ There was an issue finding input statement files. Please, check your input direc
 
 The calculator parser was unable to parse any activities within your statement file. Please, check your statement files and ensure there are reported activities. If there are reported activities, but the error still persists, please open an issue.
 
-## "Statements contain unsupported activity types"
+### "Statements contain unsupported activity types"
 
 The calculator found unsupported activity type/s. Please, open an issue and include the reported activity type.
 
-## "Unable to find previously purchased shares to surrender as part of SSP"
+### "Unable to find previously purchased shares to surrender as part of SSP"
 
 The calculator, while trying to perform the SSP surrender shares operation, was unable to find the previously purchased shares for the same stock symbol. Please, ensure there is a statement file in the input directory, containing the original purchase.
 
