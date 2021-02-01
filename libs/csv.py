@@ -44,43 +44,23 @@ def export_statements(filename, statements):
     )
 
 
-def export_app8_part1(filename, statements):
-    export_statements = [
+def export_app8_part1(filename, purchases):
+    export_purchases = [
         {
             **{
                 "count": statement["quantity"],
                 "acquire_date": statement["trade_date"].strftime(NAP_DATE_FORMAT),
-                "purchase_price_in_currency": statement["price"],
-                "purchase_price_in_lev": (statement["price"] * statement["exchange_rate"]).quantize(
-                    decimal.Decimal(NAP_DIGIT_PRECISION)
-                ),
+                "purchase_price_in_currency": statement["price_usd"],
+                "purchase_price_in_lev": statement["price"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
             },
-            **{
-                k: v
-                for k, v in statement.items()
-                if k
-                not in [
-                    "trade_date",
-                    "settle_date",
-                    "currency",
-                    "activity_type",
-                    "symbol_description",
-                    "symbol",
-                    "quantity",
-                    "price",
-                    "amount",
-                    "exchange_rate_date",
-                    "exchange_rate",
-                ]
-            },
+            **{k: v for k, v in statement.items() if k not in ["trade_date", "price_usd", "price", "quantity"]},
         }
-        for statement in statements
-        if statement["activity_type"] == "BUY"
+        for statement in purchases
     ]
     export_to_csv(
-        export_statements,
+        export_purchases,
         filename,
-        ["count", "acquire_date", "purchase_price_in_currency", "purchase_price_in_lev"],
+        ["stock_symbol", "count", "acquire_date", "purchase_price_in_currency", "purchase_price_in_lev"],
     )
 
 
@@ -101,11 +81,18 @@ def export_app5_table2(filename, sales):
 
 def export_app8_part4_1(filename, dividends):
     dividends = [
-        {**{k: v for k, v in dividend.items() if k not in ["symbol"]}, **{"profit_code": 8141, "tax_code": 1}}
+        {
+            **{k: v for k, v in dividend.items() if k not in ["symbol"]},
+            **{"profit_code": 8141, "tax_code": 1},
+            **{
+                "gross_profit_amount": dividend["gross_profit_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
+                "paid_tax_amount": dividend["paid_tax_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
+            },
+        }
         for dividend in dividends
     ]
     export_to_csv(
         dividends,
         filename,
-        ["profit_code", "tax_code", "gross_profit_amount", "paid_tax_amount"],
+        ["stock_symbol", "company", "profit_code", "tax_code", "gross_profit_amount", "paid_tax_amount"],
     )

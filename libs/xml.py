@@ -1,3 +1,4 @@
+import copy
 import lxml.etree as etree
 
 from libs import NAP_DATE_FORMAT, NAP_DIGIT_PRECISION
@@ -35,49 +36,95 @@ def generate_app5_table2(dec50, sales):
     diff = (total_profit - total_loss).quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
     if diff > 0:
         etree.SubElement(app5, "t2row7").text = str(diff)
+        etree.SubElement(app5, "part2row1").text = str(diff)
+        etree.SubElement(app5, "part2row4").text = str(diff)
     else:
         etree.SubElement(app5, "t2row7").text = "0"
 
 
-def generate_app8_part1(app8, statements):
+def aggregate_stock_data_by_date(stock_queue):
+    queue = copy.deepcopy(stock_queue)
+    aggregated_stock_data = []
+
+    for purchase in queue:
+
+        found_same_date_purchase = False
+        for data in aggregated_stock_data:
+            if purchase["trade_date"] == data["trade_date"] and purchase["price_usd"] == data["price_usd"]:
+                data["quantity"] += purchase["quantity"]
+                found_same_date_purchase = True
+
+        if not found_same_date_purchase:
+            aggregated_stock_data.append(purchase)
+
+    return aggregated_stock_data
+
+
+def generate_app8_part1(app8, purchases):
+    aggregated_data = []
+
     stocks = etree.SubElement(app8, "stocks")
-    for statement in statements:
-        if statement["activity_type"] == "BUY":
+    for stock_symbol, stock_queue in purchases.items():
+        if stock_queue:
+            comment = etree.Comment(f" === {stock_symbol} === ")
+            stocks.append(comment)
+
+        aggregated_stock_data = aggregate_stock_data_by_date(stock_queue)
+
+        for purchase in aggregated_stock_data:
             stocksenum = etree.SubElement(stocks, "stocksenum")
             etree.SubElement(stocksenum, "country").text = "САЩ"
-            etree.SubElement(stocksenum, "count").text = str(statement["quantity"])
-            etree.SubElement(stocksenum, "acquiredate").text = str(statement["trade_date"].strftime(NAP_DATE_FORMAT))
-            etree.SubElement(stocksenum, "priceincurrency").text = str(statement["price"])
+            etree.SubElement(stocksenum, "count").text = str(purchase["quantity"])
+            etree.SubElement(stocksenum, "acquiredate").text = str(purchase["trade_date"].strftime(NAP_DATE_FORMAT))
+            etree.SubElement(stocksenum, "priceincurrency").text = str(purchase["price_usd"])
             etree.SubElement(stocksenum, "price").text = str(
-                (statement["price"] * statement["exchange_rate"]).quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
+                purchase["price"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
             )
+
+            purchase["stock_symbol"] = stock_symbol
+            aggregated_data.append(purchase)
+
+    return aggregated_data
 
 
 def generate_app8_part4_1(app8, dividends):
     part38al1 = etree.SubElement(app8, "part38al1")
     for dividend in dividends:
+        comment = etree.Comment(f" === {dividend['stock_symbol']} === ")
+        part38al1.append(comment)
         rowenum = etree.SubElement(part38al1, "rowenum")
-        etree.SubElement(rowenum, "name").text = "DriveWealth LLC"
+        etree.SubElement(rowenum, "name").text = dividend["company"]
         etree.SubElement(rowenum, "country").text = "САЩ"
         etree.SubElement(rowenum, "incomecode").text = "8141"
         etree.SubElement(rowenum, "methodcode").text = "1"
-        etree.SubElement(rowenum, "sum").text = str(dividend["gross_profit_amount"])
+        etree.SubElement(rowenum, "sum").text = str(
+            dividend["gross_profit_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
+        )
         etree.SubElement(rowenum, "value").text = "0"
         etree.SubElement(rowenum, "diff").text = "0"
-        etree.SubElement(rowenum, "paidtax").text = str(dividend["paid_tax_amount"])
+        etree.SubElement(rowenum, "paidtax").text = str(
+            dividend["paid_tax_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
+        )
         etree.SubElement(rowenum, "permitedtax").text = "0"
         etree.SubElement(rowenum, "tax").text = "0"
         etree.SubElement(rowenum, "owetax").text = "0"
 
 
-def export_to_xml(filename, statements, sales, dividends):
+def export_to_xml(filename, dividends, sales=None, purchases=None):
+    aggregated_data = None
+
     dec50 = etree.Element("dec50")
 
-    generate_app5_table2(dec50, sales)
-
     app8 = etree.SubElement(dec50, "app8")
-    generate_app8_part1(app8, statements)
     generate_app8_part4_1(app8, dividends)
+
+    if sales is not None:
+        generate_app5_table2(dec50, sales)
+
+    if purchases is not None:
+        aggregated_data = generate_app8_part1(app8, purchases)
 
     tree = etree.ElementTree(dec50)
     save_to_xml(tree, filename)
+
+    return aggregated_data

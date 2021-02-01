@@ -1,5 +1,5 @@
 from libs import REVOLUT_DIGIT_PRECISION, NAP_DIGIT_PRECISION, BNB_DATE_FORMAT, NAP_DATE_FORMAT
-
+import re
 from collections import deque
 import logging
 
@@ -51,7 +51,12 @@ def calculate_win_loss(statements):
             )
             stock_queue = purchases.get(stock_symbol, deque())
             stock_queue.append(
-                {"price": statement["price"] * statement["exchange_rate"], "quantity": activity_quantity}
+                {
+                    "price": statement["price"] * statement["exchange_rate"],
+                    "price_usd": statement["price"],
+                    "quantity": activity_quantity,
+                    "trade_date": statement["trade_date"],
+                }
             )
             purchases[stock_symbol] = stock_queue
 
@@ -122,45 +127,55 @@ def calculate_win_loss(statements):
             logger.debug(f"Before addition: {stock_queue}")
 
             stock_queue.append(
-                {"price": statement["price"] * statement["exchange_rate"], "quantity": activity_quantity}
+                {
+                    "price": statement["price"] * statement["exchange_rate"],
+                    "price_usd": statement["price"],
+                    "quantity": activity_quantity,
+                    "trade_date": statement["trade_date"],
+                }
             )
             logger.debug(f"After addition: {stock_queue}")
 
-    return sales
+    return sales, purchases
+
+
+def stock_company(statement):
+    first_sep_index = statement["symbol_description"].index("-") + 1
+    company = statement["symbol_description"][first_sep_index:]
+    second_sep_index = company.index("-")
+
+    return re.sub(r"\s{2,}", " ", company[:second_sep_index].strip())
 
 
 def calculate_dividends(statements):
-    dividends_operations = {}
-    dividends = []
+    dividends = {}
     for statement in statements:
         if statement["activity_type"] == "DIV" or statement["activity_type"] == "DIVNRA":
             stock_symbol = statement["symbol"]
             activity_amount = statement["amount"] * statement["exchange_rate"]
 
             if statement["activity_type"] == "DIV":
-                if stock_symbol in dividends_operations:
-                    dividends.append(
-                        {
-                            "symbol": stock_symbol,
-                            "gross_profit_amount": (dividends_operations[stock_symbol] + activity_amount).quantize(
-                                decimal.Decimal(NAP_DIGIT_PRECISION)
-                            ),
-                            "paid_tax_amount": 0,
-                        }
-                    )
+                if stock_symbol in dividends:
+                    dividends[stock_symbol]["gross_profit_amount"] += activity_amount
+                    continue
 
-                dividends_operations[stock_symbol] = activity_amount
+                dividends[stock_symbol] = {
+                    "company": stock_company(statement),
+                    "gross_profit_amount": activity_amount,
+                }
+                continue
 
             if statement["activity_type"] == "DIVNRA":
-                dividends.append(
-                    {
-                        "symbol": stock_symbol,
-                        "gross_profit_amount": (dividends_operations[stock_symbol] + activity_amount).quantize(
-                            decimal.Decimal(NAP_DIGIT_PRECISION)
-                        ),
-                        "paid_tax_amount": activity_amount.quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
-                    }
-                )
-                del dividends_operations[stock_symbol]
+                if stock_symbol in dividends:
+                    stock_dividends = dividends[stock_symbol]
+                    stock_dividends["gross_profit_amount"] += activity_amount
+                    stock_dividends["paid_tax_amount"] = stock_dividends.get("paid_tax_amount", 0) + activity_amount
+                    continue
 
-    return dividends
+                dividends[stock_symbol] = {
+                    "company": stock_company(statement),
+                    "gross_profit_amount": activity_amount,
+                    "paid_tax_amount": activity_amount,
+                }
+
+    return [{**{"stock_symbol": stock_symbol}, **dividend} for stock_symbol, dividend in dividends.items()]

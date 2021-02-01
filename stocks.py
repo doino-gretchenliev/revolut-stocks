@@ -52,24 +52,8 @@ def main():
         logger.error(f"Not activities found. Please, check your statement files.")
         raise SystemExit(1)
 
-    unsupported_activity_types = get_unsupported_activity_types(statements)
-    if unsupported_activity_types:
-        logger.error(
-            f"Statements contain unsupported activity types: {unsupported_activity_types}. Please, check documentation."
-        )
-        raise SystemExit(1)
-
     logger.info(f"Populating exchange rates.")
     populate_exchange_rates(statements, parsed_args.use_bnb)
-
-    logger.info(f"Generating [app8-part1.csv] file.")
-    export_app8_part1(os.path.join(parsed_args.output_dir, "app8-part1.csv"), statements)
-
-    logger.info(f"Calculating sales information.")
-    sales = calculate_win_loss(statements)
-
-    logger.info(f"Generating [app5-table2.csv] file.")
-    export_app5_table2(os.path.join(parsed_args.output_dir, "app5-table2.csv"), sales)
 
     logger.info(f"Calculating dividends information.")
     dividends = calculate_dividends(statements)
@@ -77,11 +61,32 @@ def main():
     logger.info(f"Generating [app8-part4-1.csv] file.")
     export_app8_part4_1(os.path.join(parsed_args.output_dir, "app8-part4-1.csv"), dividends)
 
-    logger.info(f"Generating [dec50_2020_data.xml] file.")
-    export_to_xml(os.path.join(parsed_args.output_dir, "dec50_2020_data.xml"), statements, sales, dividends)
+    sales = None
+    purchases = None
+    unsupported_activity_types = get_unsupported_activity_types(statements)
+    if len(unsupported_activity_types) == 0:
+        logger.info(f"Calculating sales information.")
+        sales, purchases = calculate_win_loss(statements)
 
-    win_loss = sum(item["profit"] + item["loss"] for item in sales)
-    logger.info(f"Profit/Loss: {win_loss} lev.")
+        logger.info(f"Generating [app5-table2.csv] file.")
+        export_app5_table2(os.path.join(parsed_args.output_dir, "app5-table2.csv"), sales)
+
+    logger.info(f"Generating [dec50_2020_data.xml] file.")
+    aggregated_data = export_to_xml(
+        os.path.join(parsed_args.output_dir, "dec50_2020_data.xml"), dividends, sales, purchases
+    )
+
+    if aggregated_data is not None:
+        logger.info(f"Generating [app8-part1.csv] file.")
+        export_app8_part1(os.path.join(parsed_args.output_dir, "app8-part1.csv"), aggregated_data)
+
+        win_loss = sum(item["profit"] + item["loss"] for item in sales)
+        logger.info(f"Profit/Loss: {win_loss} lev.")
+
+    if unsupported_activity_types:
+        logger.warning(
+            f"Statements contain unsupported activity types: {unsupported_activity_types}. Only dividends related data was calculated."
+        )
 
 
 if __name__ == "__main__":
