@@ -1,4 +1,4 @@
-from libs import NAP_DIGIT_PRECISION, BNB_DATE_FORMAT, NAP_DATE_FORMAT
+from libs import NAP_DIGIT_PRECISION, NAP_DIVIDEND_TAX, BNB_DATE_FORMAT, NAP_DATE_FORMAT
 from collections import deque
 import logging
 
@@ -138,6 +138,19 @@ def calculate_win_loss(statements):
     return sales, purchases
 
 
+def calculate_dividends_tax(dividends):
+    result = []
+    for stock_symbol, dividend in dividends.items():
+        if dividend["paid_tax_amount"] == 0:
+            dividend["owe_tax"] = dividend["gross_profit_amount"] * decimal.Decimal(NAP_DIVIDEND_TAX)
+        else:
+            dividend["owe_tax"] = decimal.Decimal(0)
+
+        dividend["stock_symbol"] = stock_symbol
+        result.append(dividend)
+    return result
+
+
 def calculate_dividends(statements):
     dividends = {}
     for statement in statements:
@@ -153,13 +166,16 @@ def calculate_dividends(statements):
                 dividends[stock_symbol] = {
                     "company": statement["company"],
                     "gross_profit_amount": activity_amount,
+                    "paid_tax_amount": decimal.Decimal(0),
                 }
                 continue
 
             if statement["activity_type"] == "DIVNRA":
                 if stock_symbol in dividends:
                     stock_dividends = dividends[stock_symbol]
-                    stock_dividends["paid_tax_amount"] = stock_dividends.get("paid_tax_amount", 0) + activity_amount
+                    stock_dividends["paid_tax_amount"] = (
+                        stock_dividends.get("paid_tax_amount", decimal.Decimal(0)) + activity_amount
+                    )
                     continue
 
                 dividends[stock_symbol] = {
@@ -168,4 +184,4 @@ def calculate_dividends(statements):
                     "paid_tax_amount": activity_amount,
                 }
 
-    return [{**{"stock_symbol": stock_symbol}, **dividend} for stock_symbol, dividend in dividends.items()]
+    return calculate_dividends_tax(dividends)

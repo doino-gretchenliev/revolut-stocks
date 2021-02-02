@@ -88,6 +88,7 @@ def export_app8_part4_1(filename, dividends):
             **{
                 "gross_profit_amount": dividend["gross_profit_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
                 "paid_tax_amount": dividend["paid_tax_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
+                "owe_tax": dividend["owe_tax"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
             },
         }
         for dividend in dividends
@@ -95,5 +96,5 @@ def export_app8_part4_1(filename, dividends):
     export_to_csv(
         dividends,
         filename,
-        ["stock_symbol", "company", "profit_code", "tax_code", "gross_profit_amount", "paid_tax_amount"],
+        ["stock_symbol", "company", "profit_code", "tax_code", "gross_profit_amount", "paid_tax_amount", "owe_tax"],
     )

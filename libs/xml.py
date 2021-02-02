@@ -91,6 +91,8 @@ def generate_app8_part1(app8, purchases):
 
 def generate_app8_part4_1(app8, dividends):
     part38al1 = etree.SubElement(app8, "part38al1")
+
+    owe_tax_total = 0
     for dividend in dividends:
         comment = etree.Comment(f" === {dividend['stock_symbol']} === ")
         part38al1.append(comment)
@@ -109,7 +111,14 @@ def generate_app8_part4_1(app8, dividends):
         )
         etree.SubElement(rowenum, "permitedtax").text = "0"
         etree.SubElement(rowenum, "tax").text = "0"
-        etree.SubElement(rowenum, "owetax").text = "0"
+
+        owe_tax_total += dividend["owe_tax"]
+        etree.SubElement(rowenum, "owetax").text = str(
+            dividend["owe_tax"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
+        )
+
+    if owe_tax_total != 0:
+        etree.SubElement(app8, "sum81al1").text = str(owe_tax_total.quantize(decimal.Decimal(NAP_DIGIT_PRECISION)))
 
 
 def export_to_xml(filename, dividends, sales=None, purchases=None):
