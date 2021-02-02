@@ -102,5 +102,6 @@ class Parser(StatementFilesParser):
 
         return statements
 
-    def get_unsupported_activity_types(self, statements):
+    @staticmethod
+    def get_unsupported_activity_types(statements):
         return []

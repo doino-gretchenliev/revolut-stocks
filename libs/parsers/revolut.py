@@ -188,7 +188,8 @@ class Parser(StatementFilesParser):
         statements = sorted(statements, key=lambda k: k[self.get_first_non_ssp_activity_index(k)]["trade_date"])
         return [activity for activities in statements for activity in activities]
 
-    def get_unsupported_activity_types(self, statements):
+    @staticmethod
+    def get_unsupported_activity_types(statements):
         unsupported_activity_types = []
         for statement in statements:
             if statement["activity_type"] in REVOLUT_UNSUPPORTED_ACTIVITY_TYPES:

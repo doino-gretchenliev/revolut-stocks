@@ -21,7 +21,7 @@ def assert_csv_diff(diff):
     assert diff["columns_removed"] == []
 
 
-def test_csv_generation(tmp_dir):
+def test_single_csv_parser(tmp_dir):
     resources_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources")
     input_dir = os.path.join(resources_dir, "input")
     golden_dir = os.path.join(resources_dir, "golden")
@@ -29,7 +29,7 @@ def test_csv_generation(tmp_dir):
     output_dir = tmp_dir
 
     input_statements_csv = load_csv(open(os.path.join(input_dir, "test.csv")))
-    process(input_dir, output_dir, "csv", False)
+    process(input_dir, output_dir, ["csv"], False)
 
     output_statements_csv = load_csv(open(os.path.join(output_dir, "statements.csv")))
 

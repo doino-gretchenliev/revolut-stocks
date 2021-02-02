@@ -64,21 +64,21 @@
       <!-- === AMD === -->
       <stocksenum>
         <country>САЩ</country>
-        <count>0.57272042</count>
+        <count>0.57</count>
         <acquiredate>2020-09-25</acquiredate>
         <priceincurrency>43.18</priceincurrency>
         <price>72.60</price>
       </stocksenum>
       <stocksenum>
         <country>САЩ</country>
-        <count>110</count>
+        <count>110.00</count>
         <acquiredate>2020-10-06</acquiredate>
         <priceincurrency>9561.42</priceincurrency>
         <price>15854.65</price>
       </stocksenum>
       <stocksenum>
         <country>САЩ</country>
-        <count>0.44385641</count>
+        <count>0.44</count>
         <acquiredate>2020-10-06</acquiredate>
         <priceincurrency>38.58</priceincurrency>
         <price>63.97</price>
@@ -86,7 +86,7 @@
       <!-- === NVDA === -->
       <stocksenum>
         <country>САЩ</country>
-        <count>64</count>
+        <count>64.00</count>
         <acquiredate>2020-11-09</acquiredate>
         <priceincurrency>9318.24</priceincurrency>
         <price>15336.98</price>
@@ -94,7 +94,7 @@
       <!-- === VTRS === -->
       <stocksenum>
         <country>САЩ</country>
-        <count>5</count>
+        <count>5.00</count>
         <acquiredate>2020-11-20</acquiredate>
         <priceincurrency>0.00</priceincurrency>
         <price>0.00</price>
@@ -102,7 +102,7 @@
       <!-- === TST === -->
       <stocksenum>
         <country>САЩ</country>
-        <count>15</count>
+        <count>15.00</count>
         <acquiredate>2020-12-31</acquiredate>
         <priceincurrency>750.00</priceincurrency>
         <price>1195.40</price>

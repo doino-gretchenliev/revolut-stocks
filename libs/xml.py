@@ -43,8 +43,6 @@ def generate_app5_table2(dec50, sales):
 
 
 def generate_app8_part1(app8, purchases):
-    aggregated_data = []
-
     stocks = etree.SubElement(app8, "stocks")
     for stock_symbol, stock_queue in purchases.items():
         if stock_queue:
@@ -52,17 +50,14 @@ def generate_app8_part1(app8, purchases):
             stocks.append(comment)
 
         for purchase in stock_queue:
-            stocksenum = etree.SubElement(stocks, "stocksenum")
-            etree.SubElement(stocksenum, "country").text = "САЩ"
-            etree.SubElement(stocksenum, "count").text = str(purchase["quantity"])
-            etree.SubElement(stocksenum, "acquiredate").text = str(purchase["trade_date"].strftime(NAP_DATE_FORMAT))
-            etree.SubElement(stocksenum, "priceincurrency").text = str(purchase["price_in_currency"])
-            etree.SubElement(stocksenum, "price").text = str(purchase["price"])
-
-            purchase["stock_symbol"] = stock_symbol
-            aggregated_data.append(purchase)
-
-    return aggregated_data
+            count = purchase["quantity"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
+            if count > 0:
+                stocksenum = etree.SubElement(stocks, "stocksenum")
+                etree.SubElement(stocksenum, "country").text = "САЩ"
+                etree.SubElement(stocksenum, "count").text = str(count)
+                etree.SubElement(stocksenum, "acquiredate").text = str(purchase["trade_date"].strftime(NAP_DATE_FORMAT))
+                etree.SubElement(stocksenum, "priceincurrency").text = str(purchase["price_in_currency"])
+                etree.SubElement(stocksenum, "price").text = str(purchase["price"])
 
 
 def generate_app8_part4_1(app8, dividends):
@@ -77,21 +72,15 @@ def generate_app8_part4_1(app8, dividends):
         etree.SubElement(rowenum, "country").text = "САЩ"
         etree.SubElement(rowenum, "incomecode").text = "8141"
         etree.SubElement(rowenum, "methodcode").text = "1"
-        etree.SubElement(rowenum, "sum").text = str(
-            dividend["gross_profit_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
-        )
+        etree.SubElement(rowenum, "sum").text = str(dividend["gross_profit_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)))
         etree.SubElement(rowenum, "value").text = "0"
         etree.SubElement(rowenum, "diff").text = "0"
-        etree.SubElement(rowenum, "paidtax").text = str(
-            dividend["paid_tax_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
-        )
+        etree.SubElement(rowenum, "paidtax").text = str(dividend["paid_tax_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)))
         etree.SubElement(rowenum, "permitedtax").text = "0"
         etree.SubElement(rowenum, "tax").text = "0"
 
         owe_tax_total += dividend["owe_tax"]
-        etree.SubElement(rowenum, "owetax").text = str(
-            dividend["owe_tax"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
-        )
+        etree.SubElement(rowenum, "owetax").text = str(dividend["owe_tax"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)))
 
     if owe_tax_total != 0:
         etree.SubElement(app8, "sum81al1").text = str(owe_tax_total.quantize(decimal.Decimal(NAP_DIGIT_PRECISION)))

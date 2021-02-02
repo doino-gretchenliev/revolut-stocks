@@ -9,6 +9,7 @@ from libs.process import process, supported_parsers
 from libs.gui.worker import Worker
 from libs.gui.signals import LogSignal
 from libs.gui.colors import log_colors
+from libs.gui.multiselect import CheckableComboBox
 
 TITLE = "NAP Stocks Calculator"
 
@@ -34,7 +35,6 @@ class Window(QMainWindow, logging.Handler):
 
         self.input_dir = None
         self.output_dir = None
-        self.selected_parser = next(iter(supported_parsers.keys()))
 
         self.home()
 
@@ -81,10 +81,8 @@ class Window(QMainWindow, logging.Handler):
         self.output_box = QLineEdit()
         self.output_box.setReadOnly(True)
 
-        self.parser_combo = QComboBox(self)
-        for supported_parser in supported_parsers.keys():
-            self.parser_combo.addItem(supported_parser)
-        self.parser_combo.activated[str].connect(self.parser_changed)
+        self.parser_combo = CheckableComboBox(self)
+        self.parser_combo.addItems(supported_parsers.keys(), next(iter(supported_parsers.keys())))
 
         self.calc_button = QPushButton("Calculate")
         self.calc_button.setEnabled(False)
@@ -100,9 +98,7 @@ class Window(QMainWindow, logging.Handler):
         self.debug_check.stateChanged.connect(self.toggle_debug)
 
         self.about_link = QLabel()
-        self.about_link.setText(
-            'Developed by: <a href="https://github.com/doino-gretchenliev/revolut-stocks">Doino Gretchenliev</a>'
-        )
+        self.about_link.setText('Developed by: <a href="https://github.com/doino-gretchenliev/revolut-stocks">Doino Gretchenliev</a>')
         self.about_link.setOpenExternalLinks(True)
 
         self.log_signal.new_message.connect(self.write_log_message)
@@ -118,9 +114,6 @@ class Window(QMainWindow, logging.Handler):
         layout.addWidget(self.about_link)
 
         self.show()
-
-    def parser_changed(self, text):
-        self.selected_parser = text
 
     def toggle_debug(self, state):
         if state == Qt.Checked:
@@ -139,7 +132,7 @@ class Window(QMainWindow, logging.Handler):
     def start_worker(self):
         self.calc_button.setEnabled(False)
         self.log_widget.clear()
-        worker = Worker(process, self.input_dir, self.output_dir, self.selected_parser, False)
+        worker = Worker(process, self.input_dir, self.output_dir, self.parser_combo.get_selected(), False)
         worker.signals.finished.connect(self.finished)
         worker.signals.error.connect(self.error)
         self.threadpool.start(worker)

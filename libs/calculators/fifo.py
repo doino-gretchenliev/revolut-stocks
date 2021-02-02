@@ -18,7 +18,7 @@ import decimal
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
 
-def calculate_win_loss(statements):
+def calculate_sales(statements):
     purchases = {}
     sales = []
     ssp_surrendered_data = {}
@@ -85,9 +85,7 @@ def calculate_win_loss(statements):
             else:
                 sale["loss"] = profit_loss
 
-            profit_loss = (sell_price_in_currency - purchase_price_in_currency).quantize(
-                decimal.Decimal(NAP_DIGIT_PRECISION)
-            )
+            profit_loss = (sell_price_in_currency - purchase_price_in_currency).quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
             if profit_loss > 0:
                 sale["profit_in_currency"] = profit_loss
             else:
@@ -148,7 +146,7 @@ def calculate_win_loss(statements):
             logger.debug(f"After addition: {stock_queue}")
             del ssp_surrendered_data[stock_symbol]
 
-    return sales, calculate_remaining_purchases(purchases)
+    return sales, purchases
 
 
 def calculate_remaining_purchases(purchases):
@@ -161,9 +159,7 @@ def calculate_remaining_purchases(purchases):
                 {
                     **purchase,
                     **{
-                        "price_in_currency": (purchase["price"] * purchase["quantity"]).quantize(
-                            decimal.Decimal(NAP_DIGIT_PRECISION)
-                        ),
+                        "price_in_currency": (purchase["price"] * purchase["quantity"]).quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
                         "price": (purchase["price"] * purchase["exchange_rate"] * purchase["quantity"]).quantize(
                             decimal.Decimal(NAP_DIGIT_PRECISION)
                         ),
@@ -201,10 +197,7 @@ def calculate_dividends(statements):
     dividends = {}
     for statement in statements:
 
-        if (
-            statement["activity_type"] in RECEIVED_DIVIDEND_ACTIVITY_TYPES
-            or statement["activity_type"] in TAX_DIVIDEND_ACTIVITY_TYPES
-        ):
+        if statement["activity_type"] in RECEIVED_DIVIDEND_ACTIVITY_TYPES or statement["activity_type"] in TAX_DIVIDEND_ACTIVITY_TYPES:
             stock_symbol = statement["symbol"]
             activity_amount = statement["amount"] * statement["exchange_rate"]
 
@@ -228,8 +221,15 @@ def calculate_dividends(statements):
                     raise SystemExit(1)
 
                 stock_queue = dividends[stock_symbol]
-                stock_queue[-1]["paid_tax_amount"] = (
-                    stock_queue[-1].get("paid_tax_amount", decimal.Decimal(0)) + activity_amount
-                )
+                stock_queue[-1]["paid_tax_amount"] = stock_queue[-1].get("paid_tax_amount", decimal.Decimal(0)) + activity_amount
 
-    return calculate_dividends_tax(dividends)
+    return dividends
+
+
+def calculate_win_loss(sales):
+    win_loss = 0
+    win_loss_in_currency = 0
+    for sale in sales:
+        win_loss += sale["profit"] + sale["loss"]
+        win_loss_in_currency += sale["profit_in_currency"] + sale["loss_in_currency"]
+    return win_loss, win_loss_in_currency

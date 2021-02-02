@@ -38,9 +38,22 @@ Note: The calculator is not natively tested on Windows OS. When using Windows it
 
 `pip install -r requirements.txt`
 
-#### Run
+#### Run (single parser)
 
 `python stocks.py -i <path_to_input_dir> -o <path_to_output_dir>`
+
+#### Run (multiple parsers)
+
+In order to use multiple parsers, you need to sort your statement files into a corresponding parser directory under the selected input directory. For example:
+
+```sh
+/input-directory/revolut - directory contains Revolut statement files
+/input-directory/trading212 - directory contains Trading 212 statement files
+```
+
+You can use the help command to list supported parsers with their names.
+
+`python stocks.py -i <path_to_input_dir> -o <path_to_output_dir> -p <parser_name#1> -p <parser_name#2> ...`
 
 #### Help
 

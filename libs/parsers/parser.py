@@ -5,5 +5,6 @@ class StatementFilesParser(object):
     def parse(self):
         pass
 
+    @staticmethod
     def get_unsupported_activity_types(self):
         pass
