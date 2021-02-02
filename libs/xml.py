@@ -76,9 +76,11 @@ def generate_app8_part1(app8, purchases):
             etree.SubElement(stocksenum, "country").text = "САЩ"
             etree.SubElement(stocksenum, "count").text = str(purchase["quantity"])
             etree.SubElement(stocksenum, "acquiredate").text = str(purchase["trade_date"].strftime(NAP_DATE_FORMAT))
-            etree.SubElement(stocksenum, "priceincurrency").text = str(purchase["price_usd"])
+            etree.SubElement(stocksenum, "priceincurrency").text = str(
+                (purchase["price_usd"] * purchase["quantity"]).quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
+            )
             etree.SubElement(stocksenum, "price").text = str(
-                purchase["price"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
+                (purchase["price"] * purchase["quantity"]).quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
             )
 
             purchase["stock_symbol"] = stock_symbol

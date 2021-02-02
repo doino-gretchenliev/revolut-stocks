@@ -159,7 +159,6 @@ def calculate_dividends(statements):
             if statement["activity_type"] == "DIVNRA":
                 if stock_symbol in dividends:
                     stock_dividends = dividends[stock_symbol]
-                    stock_dividends["gross_profit_amount"] += activity_amount
                     stock_dividends["paid_tax_amount"] = stock_dividends.get("paid_tax_amount", 0) + activity_amount
                     continue
 
