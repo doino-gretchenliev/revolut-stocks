@@ -32,6 +32,8 @@ Revolut Stock calculator is able to parse Revolut statement documents and provid
 
 ### Local
 
+Note: The calculator is not natively tested on Windows OS. When using Windows it's preferable to use WSL and Docker.
+
 #### Install dependencies
 
 `pip install -r requirements.txt`
