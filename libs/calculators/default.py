@@ -1,4 +1,6 @@
 from libs import NAP_DIGIT_PRECISION, NAP_DIVIDEND_TAX, BNB_DATE_FORMAT, NAP_DATE_FORMAT
+from libs.calculators.utils import get_avg_purchase_price, adjust_quantity, aggregate_purchases
+
 from collections import deque
 import logging
 
@@ -7,33 +9,6 @@ logger = logging.getLogger("calculations")
 import decimal
 
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
-
-
-def get_avg_purchase_price(stock_queue):
-    if len(stock_queue) == 1:
-        return stock_queue[0]["price"]
-
-    price = 0
-    quantity = 0
-    for data in stock_queue:
-        price += data["price"] * data["quantity"]
-        quantity += data["quantity"]
-
-    return price / quantity
-
-
-def adjust_quantity(stock_queue, sold_quantity):
-    quantity_to_adjust = sold_quantity
-
-    for data in list(stock_queue):
-        quantity_after_abj = data["quantity"] - quantity_to_adjust
-
-        if quantity_after_abj > 0:
-            data["quantity"] = quantity_after_abj
-            break
-
-        stock_queue.popleft()
-        quantity_to_adjust -= data["quantity"]
 
 
 def calculate_win_loss(statements):
@@ -135,53 +110,85 @@ def calculate_win_loss(statements):
             )
             logger.debug(f"After addition: {stock_queue}")
 
-    return sales, purchases
+    return sales, calculate_remaining_purchases(purchases)
+
+
+def calculate_remaining_purchases(purchases):
+    result = {}
+    for stock_symbol, stock_queue in aggregate_purchases(purchases).items():
+
+        calculated_queue = []
+        for purchase in stock_queue:
+            calculated_queue.append(
+                {
+                    **purchase,
+                    **{
+                        "price_in_currency": (purchase["price_usd"] * purchase["quantity"]).quantize(
+                            decimal.Decimal(NAP_DIGIT_PRECISION)
+                        ),
+                        "price": (purchase["price"] * purchase["quantity"]).quantize(
+                            decimal.Decimal(NAP_DIGIT_PRECISION)
+                        ),
+                    },
+                }
+            )
+        result[stock_symbol] = calculated_queue
+
+    return result
 
 
 def calculate_dividends_tax(dividends):
     result = []
-    for stock_symbol, dividend in dividends.items():
-        if dividend["paid_tax_amount"] == 0:
-            dividend["owe_tax"] = dividend["gross_profit_amount"] * decimal.Decimal(NAP_DIVIDEND_TAX)
-        else:
-            dividend["owe_tax"] = decimal.Decimal(0)
+    for stock_symbol, stock_queue in dividends.items():
+        for dividend in stock_queue:
+            owe_tax = decimal.Decimal(0)
+            if dividend["paid_tax_amount"] == 0:
+                owe_tax = dividend["gross_profit_amount"] * decimal.Decimal(NAP_DIVIDEND_TAX)
 
-        dividend["stock_symbol"] = stock_symbol
-        result.append(dividend)
+            found_same_company_dividend = False
+            for stock_data in result:
+                if stock_data["stock_symbol"] == stock_symbol:
+                    stock_data["paid_tax_amount"] += dividend["paid_tax_amount"]
+                    stock_data["gross_profit_amount"] += dividend["gross_profit_amount"]
+                    stock_data["owe_tax"] += owe_tax
+                    found_same_company_dividend = True
+                    break
+
+            if not found_same_company_dividend:
+                result.append({**dividend, **{"stock_symbol": stock_symbol, "owe_tax": owe_tax}})
     return result
 
 
 def calculate_dividends(statements):
     dividends = {}
     for statement in statements:
+
         if statement["activity_type"] == "DIV" or statement["activity_type"] == "DIVNRA":
             stock_symbol = statement["symbol"]
             activity_amount = statement["amount"] * statement["exchange_rate"]
 
-            if statement["activity_type"] == "DIV":
-                if stock_symbol in dividends:
-                    dividends[stock_symbol]["gross_profit_amount"] += activity_amount
-                    continue
+            logger.debug(f"[{statement['activity_type']}] [{stock_symbol}] am:[{activity_amount}]")
 
-                dividends[stock_symbol] = {
-                    "company": statement["company"],
-                    "gross_profit_amount": activity_amount,
-                    "paid_tax_amount": decimal.Decimal(0),
-                }
+            if statement["activity_type"] == "DIV":
+                stock_queue = dividends.get(stock_symbol, deque())
+                stock_queue.append(
+                    {
+                        "company": statement["company"],
+                        "gross_profit_amount": activity_amount,
+                        "paid_tax_amount": decimal.Decimal(0),
+                    }
+                )
+                dividends[stock_symbol] = stock_queue
                 continue
 
             if statement["activity_type"] == "DIVNRA":
-                if stock_symbol in dividends:
-                    stock_dividends = dividends[stock_symbol]
-                    stock_dividends["paid_tax_amount"] = (
-                        stock_dividends.get("paid_tax_amount", decimal.Decimal(0)) + activity_amount
-                    )
-                    continue
+                if stock_symbol not in dividends:
+                    logging.error(f"No previous dividend information found for: [{stock_symbol}].")
+                    raise SystemExit(1)
 
-                dividends[stock_symbol] = {
-                    "company": statement["company"],
-                    "gross_profit_amount": activity_amount,
-                    "paid_tax_amount": activity_amount,
-                }
+                stock_queue = dividends[stock_symbol]
+                stock_queue[-1]["paid_tax_amount"] = (
+                    stock_queue[-1].get("paid_tax_amount", decimal.Decimal(0)) + activity_amount
+                )
 
     return calculate_dividends_tax(dividends)

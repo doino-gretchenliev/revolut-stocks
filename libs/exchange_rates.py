@@ -14,6 +14,7 @@ logger = logging.getLogger("exchange_rates")
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
 from libs import BNB_BASE_URL, BNB_DATE_FORMAT, BNB_SPLIT_BY_MONTHS, BNB_CSV_HEADER_ROWS
+from libs.cached_exchange_rates import load_exchange_rates
 
 
 def query_exchange_rates(first_date, last_date):
@@ -75,23 +76,6 @@ def get_exchange_rates(first_date, last_date):
 
         if first_date > last_date:
             break
-
-    return exchange_rates
-
-
-def load_exchange_rates():
-    exchange_rates = {}
-
-    exchange_rates_dir = os.path.dirname(os.path.realpath(__file__))
-    exchange_rates_file = os.path.join(exchange_rates_dir, "exchange_rates.json")
-
-    dates = {}
-    with open(exchange_rates_file, "r") as fd:
-        dates = json.load(fd)
-
-    for date, exchange_rate in dates.items():
-        date = datetime.strptime(date, BNB_DATE_FORMAT)
-        exchange_rates[date] = decimal.Decimal(exchange_rate)
 
     return exchange_rates
 

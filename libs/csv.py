@@ -46,18 +46,21 @@ def export_statements(filename, statements):
 
 
 def export_app8_part1(filename, purchases):
-    export_purchases = [
-        {
-            **{
-                "count": statement["quantity"],
-                "acquire_date": statement["trade_date"].strftime(NAP_DATE_FORMAT),
-                "purchase_price_in_currency": statement["price_usd"],
-                "purchase_price_in_lev": statement["price"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
-            },
-            **{k: v for k, v in statement.items() if k not in ["trade_date", "price_usd", "price", "quantity"]},
-        }
-        for statement in purchases
-    ]
+    export_purchases = []
+    for stock_symbol, stock_queue in purchases.items():
+        for purchase in stock_queue:
+            export_purchases.append(
+                {
+                    **{
+                        "stock_symbol": stock_symbol,
+                        "count": purchase["quantity"],
+                        "acquire_date": purchase["trade_date"].strftime(NAP_DATE_FORMAT),
+                        "purchase_price_in_currency": purchase["price_in_currency"],
+                        "purchase_price_in_lev": purchase["price"],
+                    },
+                }
+            )
+
     export_to_csv(
         export_purchases,
         filename,

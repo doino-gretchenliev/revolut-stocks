@@ -1,0 +1,4 @@
+"Stock Symbol","Company","Profit Code","Tax Code","Gross Profit Amount","Paid Tax Amount","Owe Tax"
+"AAPL","APPLE INC COM","8141","1","164.97","0.48","8.08"
+"NVDA","NVIDIA CORPORATION COM","8141","1","2.50","0.32","0.00"
+"TST","TEST INC COM","8141","1","11.31","0.00","0.57"

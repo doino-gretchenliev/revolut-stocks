@@ -27,12 +27,6 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -132,6 +126,9 @@ dmypy.json
 test-input
 test-output
 test-input-personal
+
+# Support docs
+commands.md
 
 # Support scripts
 get_exchange_rates.py

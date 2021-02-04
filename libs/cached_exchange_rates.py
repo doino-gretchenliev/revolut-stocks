@@ -1,4 +1,11 @@
-{
+from datetime import datetime
+import decimal
+
+decimal.getcontext().rounding = decimal.ROUND_HALF_UP
+
+from libs import BNB_DATE_FORMAT
+
+exchange_rates = {
     "01.01.2017": "1.85545",
     "02.01.2017": "1.85545",
     "03.01.2017": "1.88332",
@@ -1459,5 +1466,15 @@
     "28.12.2020": "1.60762",
     "29.12.2020": "1.59542",
     "30.12.2020": "1.59257",
-    "31.12.2020": "1.59386"
+    "31.12.2020": "1.59386",
 }
+
+
+def load_exchange_rates():
+    result = {}
+
+    for date, exchange_rate in exchange_rates.items():
+        date = datetime.strptime(date, BNB_DATE_FORMAT)
+        result[date] = decimal.Decimal(exchange_rate)
+
+    return result
