@@ -5,6 +5,7 @@ import decimal
 
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
+from libs import RECEIVED_DIVIDEND_ACTIVITY_TYPES, TAX_DIVIDEND_ACTIVITY_TYPES
 from libs.utils import list_statement_files
 from libs.parsers.parser import StatementFilesParser
 
@@ -18,7 +19,7 @@ CSV_DATE_FORMATS = [
     "%m/%d/%Y",
     "%Y/%m/%d",
 ]
-CSV_ACTIVITY_TYPES = ["SELL", "BUY", "DIV", "DIVNRA", "SSP", "MAS"]
+CSV_ACTIVITY_TYPES = ["SELL", "BUY", "SSP", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
 CSV_REQUIRED_COLUMNS = ["trade_date", "activity_type", "company", "symbol", "quantity", "price", "amount"]
 
 

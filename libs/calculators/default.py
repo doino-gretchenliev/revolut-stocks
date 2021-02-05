@@ -1,4 +1,11 @@
-from libs import NAP_DIGIT_PRECISION, NAP_DIVIDEND_TAX, BNB_DATE_FORMAT, NAP_DATE_FORMAT
+from libs import (
+    NAP_DIGIT_PRECISION,
+    NAP_DIVIDEND_TAX,
+    BNB_DATE_FORMAT,
+    NAP_DATE_FORMAT,
+    RECEIVED_DIVIDEND_ACTIVITY_TYPES,
+    TAX_DIVIDEND_ACTIVITY_TYPES,
+)
 from libs.calculators.utils import get_avg_purchase_price, adjust_quantity, aggregate_purchases
 
 from collections import deque
@@ -163,13 +170,16 @@ def calculate_dividends(statements):
     dividends = {}
     for statement in statements:
 
-        if statement["activity_type"] == "DIV" or statement["activity_type"] == "DIVNRA":
+        if (
+            statement["activity_type"] in RECEIVED_DIVIDEND_ACTIVITY_TYPES
+            or statement["activity_type"] in TAX_DIVIDEND_ACTIVITY_TYPES
+        ):
             stock_symbol = statement["symbol"]
             activity_amount = statement["amount"] * statement["exchange_rate"]
 
             logger.debug(f"[{statement['activity_type']}] [{stock_symbol}] am:[{activity_amount}]")
 
-            if statement["activity_type"] == "DIV":
+            if statement["activity_type"] in RECEIVED_DIVIDEND_ACTIVITY_TYPES:
                 stock_queue = dividends.get(stock_symbol, deque())
                 stock_queue.append(
                     {
@@ -181,7 +191,7 @@ def calculate_dividends(statements):
                 dividends[stock_symbol] = stock_queue
                 continue
 
-            if statement["activity_type"] == "DIVNRA":
+            if statement["activity_type"] in TAX_DIVIDEND_ACTIVITY_TYPES:
                 if stock_symbol not in dividends:
                     logging.error(f"No previous dividend information found for: [{stock_symbol}].")
                     raise SystemExit(1)

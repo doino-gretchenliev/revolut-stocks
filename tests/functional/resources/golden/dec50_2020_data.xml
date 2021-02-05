@@ -11,10 +11,10 @@
         <sum>164.97</sum>
         <value>0</value>
         <diff>0</diff>
-        <paidtax>0.48</paidtax>
+        <paidtax>16.63</paidtax>
         <permitedtax>0</permitedtax>
         <tax>0</tax>
-        <owetax>8.08</owetax>
+        <owetax>0.00</owetax>
       </rowenum>
       <!-- === NVDA === -->
       <rowenum>
@@ -44,8 +44,22 @@
         <tax>0</tax>
         <owetax>0.57</owetax>
       </rowenum>
+      <!-- === TSTDIVROC === -->
+      <rowenum>
+        <name>TEST INC COM</name>
+        <country>САЩ</country>
+        <incomecode>8141</incomecode>
+        <methodcode>1</methodcode>
+        <sum>175.32</sum>
+        <value>0</value>
+        <diff>0</diff>
+        <paidtax>0.00</paidtax>
+        <permitedtax>0</permitedtax>
+        <tax>0</tax>
+        <owetax>8.77</owetax>
+      </rowenum>
     </part38al1>
-    <sum81al1>8.64</sum81al1>
+    <sum81al1>9.33</sum81al1>
     <stocks>
       <!-- === AMD === -->
       <stocksenum>

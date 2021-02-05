@@ -9,16 +9,18 @@ import decimal
 
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
+from libs import RECEIVED_DIVIDEND_ACTIVITY_TYPES, TAX_DIVIDEND_ACTIVITY_TYPES
 from libs.utils import list_statement_files
 from libs.parsers.parser import StatementFilesParser
 
 logger = logging.getLogger("parsers")
 
 REVOLUT_DATE_FORMAT = "%m/%d/%Y"
-REVOLUT_ACTIVITY_TYPES = ["SELL", "BUY", "DIV", "DIVNRA", "SSP", "MAS"]
+
+REVOLUT_ACTIVITY_TYPES = ["SELL", "BUY", "SSP", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
 REVOLUT_CASH_ACTIVITY_TYPES = ["CDEP", "CSD"]
 REVOLUT_OUT_OF_ORDER_ACTIVITY_TYPES = ["SSP", "MAS"]
-REVOLUT_UNSUPPORTED_ACTIVITY_TYPES = []
+REVOLUT_UNSUPPORTED_ACTIVITY_TYPES = ["SC", "NC", "MA"]
 REVOLUT_ACTIVITIES_PAGES_INDICATORS = ["Balance Summary", "ACTIVITY", "Equity"]
 REVOLUT_DIGIT_PRECISION = "0.00000001"
 
