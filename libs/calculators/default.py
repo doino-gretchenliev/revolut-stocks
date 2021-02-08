@@ -85,6 +85,24 @@ def calculate_win_loss(statements):
             adjust_quantity(stock_queue, activity_quantity)
             logger.debug(f"After adjustment: {purchases[stock_symbol]}")
 
+        if statement["activity_type"] == "SSO":
+            activity_quantity = abs(statement.get("quantity", 0))
+
+            logger.debug(
+                f"[SSO] [{stock_symbol}] td:[{statement['trade_date']}] qt:[{activity_quantity}] pr:[{statement['price']}] ex:[{statement['exchange_rate']}]"
+            )
+
+            stock_queue = purchases.get(stock_symbol, deque())
+            stock_queue.append(
+                {
+                    "price": decimal.Decimal(0),
+                    "exchange_rate": decimal.Decimal(0),
+                    "quantity": activity_quantity,
+                    "trade_date": statement["trade_date"],
+                }
+            )
+            purchases[stock_symbol] = stock_queue
+
         if statement["activity_type"] == "SSP" or statement["activity_type"] == "MAS":
             activity_type = statement["activity_type"]
             activity_quantity = statement["quantity"]

@@ -91,6 +91,14 @@
         <priceincurrency>9318.24</priceincurrency>
         <price>15336.98</price>
       </stocksenum>
+      <!-- === VTRS === -->
+      <stocksenum>
+        <country>САЩ</country>
+        <count>5</count>
+        <acquiredate>2020-11-20</acquiredate>
+        <priceincurrency>0.00</priceincurrency>
+        <price>0.00</price>
+      </stocksenum>
       <!-- === TST === -->
       <stocksenum>
         <country>САЩ</country>
@@ -1563,11 +1571,21 @@
         <egn></egn>
         <name></name>
       </rowenum>
+      <rowenum>
+        <code>508</code>
+        <transferdate>2020-12-31</transferdate>
+        <sellvalue>79.69</sellvalue>
+        <buyvalue>0.00</buyvalue>
+        <profit>79.69</profit>
+        <loss>0</loss>
+        <egn></egn>
+        <name></name>
+      </rowenum>
     </table2>
-    <t2row6pr>662611.80</t2row6pr>
+    <t2row6pr>662691.49</t2row6pr>
     <t2row6ls>5730.71</t2row6ls>
-    <t2row7>656881.09</t2row7>
-    <part2row1>656881.09</part2row1>
-    <part2row4>656881.09</part2row4>
+    <t2row7>656960.78</t2row7>
+    <part2row1>656960.78</part2row1>
+    <part2row4>656960.78</part2row4>
   </app5>
 </dec50>

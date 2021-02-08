@@ -19,7 +19,7 @@ CSV_DATE_FORMATS = [
     "%m/%d/%Y",
     "%Y/%m/%d",
 ]
-CSV_ACTIVITY_TYPES = ["SELL", "BUY", "SSP", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
+CSV_ACTIVITY_TYPES = ["SELL", "BUY", "SSP", "SSO", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
 CSV_REQUIRED_COLUMNS = ["trade_date", "activity_type", "company", "symbol", "quantity", "price", "amount"]
 
 
@@ -39,7 +39,6 @@ class Parser(StatementFilesParser):
 
     def read_headers(self, header_row):
         headers = {column_name.replace(" ", "_").lower(): index for index, column_name in enumerate(header_row)}
-        print(headers)
 
         missing_required_columns = []
         for required_column in CSV_REQUIRED_COLUMNS:

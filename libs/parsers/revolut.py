@@ -17,10 +17,13 @@ logger = logging.getLogger("parsers")
 
 REVOLUT_DATE_FORMAT = "%m/%d/%Y"
 
-REVOLUT_ACTIVITY_TYPES = ["SELL", "BUY", "SSP", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
+REVOLUT_ACTIVITY_TYPES = (
+    ["SELL", "BUY", "SSP", "SSO", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
+)
 REVOLUT_CASH_ACTIVITY_TYPES = ["CDEP", "CSD"]
 REVOLUT_OUT_OF_ORDER_ACTIVITY_TYPES = ["SSP", "MAS"]
-REVOLUT_UNSUPPORTED_ACTIVITY_TYPES = ["SC", "NC", "MA", "SSO"]
+REVOLUT_UNSUPPORTED_ACTIVITY_TYPES = ["SC", "NC", "MA"]
+REVOLUT_NO_COMPANY_ACTIVITY_TYPES = ["SSO"]
 REVOLUT_ACTIVITIES_PAGES_INDICATORS = ["Balance Summary", "ACTIVITY", "Equity"]
 REVOLUT_DIGIT_PRECISION = "0.00000001"
 
@@ -52,9 +55,15 @@ class Parser(StatementFilesParser):
         logger.debug(f"Found begin index: [{begin_index}] and end index: [{end_index}]")
         return begin_index + 1, end_index
 
+    def extract_symbol(self, symbol_description):
+        try:
+            return symbol_description[0 : symbol_description.index("-") - 1]
+        except ValueError:
+            logger.error(f"Unable to extract stock symbol from description:[{symbol_description}].")
+            raise SystemExit(1)
+
     def extract_symbol_description(self, begin_index, page_strings):
         symbol_description = ""
-        symbol = ""
         end_index = begin_index
         for page_string in page_strings[begin_index:]:
             try:
@@ -64,13 +73,10 @@ class Parser(StatementFilesParser):
                 symbol_description += page_string
             end_index += 1
 
-        try:
-            symbol = symbol_description[0 : symbol_description.index("-") - 1]
-        except ValueError:
-            logger.error("Unable to extract stock symbol.")
-            raise SystemExit(1)
+        if page_strings[end_index - 1] in REVOLUT_CASH_ACTIVITY_TYPES:
+            symbol_description = None
 
-        return end_index, symbol, symbol_description
+        return end_index, symbol_description
 
     def clean_number(self, number_string):
         return number_string.replace("(", "").replace(")", "").replace(",", "")
@@ -81,7 +87,9 @@ class Parser(StatementFilesParser):
         try:
             first_sep_index = symbol_description.index("-") + 1
             company = symbol_description[first_sep_index:]
-            second_sep_index = company.index("-")
+            second_sep_index = len(company)
+            if "-" in company:
+                second_sep_index = company.index("-")
         except ValueError:
             logger.error("Unable to extract stock company.")
             raise SystemExit(1)
@@ -89,7 +97,11 @@ class Parser(StatementFilesParser):
         return re.sub(r"\s{2,}", " ", company[:second_sep_index].strip())
 
     def extract_activity(self, begin_index, page_strings, num_fields):
-        end_index, symbol, symbol_description = self.extract_symbol_description(begin_index + 4, page_strings)
+        logger.debug(f"Page string: {page_strings}")
+        end_index, symbol_description = self.extract_symbol_description(begin_index + 4, page_strings)
+        symbol = None
+        if symbol_description is not None:
+            symbol = self.extract_symbol(symbol_description)
 
         activity = {
             "trade_date": datetime.strptime(page_strings[begin_index], REVOLUT_DATE_FORMAT),
@@ -104,7 +116,8 @@ class Parser(StatementFilesParser):
             activity["quantity"] = decimal.Decimal(page_strings[end_index])
             activity["price"] = decimal.Decimal(page_strings[end_index + 1])
             activity["amount"] = page_strings[end_index + 2]
-            activity["company"] = self.get_stock_company(symbol_description)
+            if activity["activity_type"] not in REVOLUT_NO_COMPANY_ACTIVITY_TYPES:
+                activity["company"] = self.get_stock_company(symbol_description)
         elif num_fields == 6:
             activity["amount"] = page_strings[end_index]
 
