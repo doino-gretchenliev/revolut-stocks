@@ -20,7 +20,7 @@ REVOLUT_DATE_FORMAT = "%m/%d/%Y"
 REVOLUT_ACTIVITY_TYPES = ["SELL", "BUY", "SSP", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
 REVOLUT_CASH_ACTIVITY_TYPES = ["CDEP", "CSD"]
 REVOLUT_OUT_OF_ORDER_ACTIVITY_TYPES = ["SSP", "MAS"]
-REVOLUT_UNSUPPORTED_ACTIVITY_TYPES = ["SC", "NC", "MA"]
+REVOLUT_UNSUPPORTED_ACTIVITY_TYPES = ["SC", "NC", "MA", "SSO"]
 REVOLUT_ACTIVITIES_PAGES_INDICATORS = ["Balance Summary", "ACTIVITY", "Equity"]
 REVOLUT_DIGIT_PRECISION = "0.00000001"
 
@@ -64,16 +64,27 @@ class Parser(StatementFilesParser):
                 symbol_description += page_string
             end_index += 1
 
-        symbol = symbol_description[0 : symbol_description.index("-") - 1]
+        try:
+            symbol = symbol_description[0 : symbol_description.index("-") - 1]
+        except ValueError:
+            logger.error("Unable to extract stock symbol.")
+            raise SystemExit(1)
+
         return end_index, symbol, symbol_description
 
     def clean_number(self, number_string):
         return number_string.replace("(", "").replace(")", "").replace(",", "")
 
     def get_stock_company(self, symbol_description):
-        first_sep_index = symbol_description.index("-") + 1
-        company = symbol_description[first_sep_index:]
-        second_sep_index = company.index("-")
+        company = None
+        second_sep_index = None
+        try:
+            first_sep_index = symbol_description.index("-") + 1
+            company = symbol_description[first_sep_index:]
+            second_sep_index = company.index("-")
+        except ValueError:
+            logger.error("Unable to extract stock company.")
+            raise SystemExit(1)
 
         return re.sub(r"\s{2,}", " ", company[:second_sep_index].strip())
 
