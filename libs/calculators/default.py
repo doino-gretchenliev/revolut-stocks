@@ -6,7 +6,7 @@ from libs import (
     RECEIVED_DIVIDEND_ACTIVITY_TYPES,
     TAX_DIVIDEND_ACTIVITY_TYPES,
 )
-from libs.calculators.utils import get_avg_purchase_price, adjust_quantity, aggregate_purchases
+from libs.calculators.utils import get_avg_purchase_price, adjust_quantity, adjust_stock_data, aggregate_purchases
 
 from collections import deque
 import logging
@@ -21,6 +21,7 @@ decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 def calculate_win_loss(statements):
     purchases = {}
     sales = []
+    ssp_surrendered_data = {}
     for statement in statements:
         stock_symbol = statement.get("symbol", None)
 
@@ -33,8 +34,8 @@ def calculate_win_loss(statements):
             stock_queue = purchases.get(stock_symbol, deque())
             stock_queue.append(
                 {
-                    "price": statement["price"] * statement["exchange_rate"],
-                    "price_usd": statement["price"],
+                    "price": statement["price"],
+                    "exchange_rate": statement["exchange_rate"],
                     "quantity": activity_quantity,
                     "trade_date": statement["trade_date"],
                 }
@@ -87,35 +88,34 @@ def calculate_win_loss(statements):
         if statement["activity_type"] == "SSP" or statement["activity_type"] == "MAS":
             activity_type = statement["activity_type"]
             activity_quantity = statement["quantity"]
+            stock_symbol = stock_symbol.replace(".OLD", "")
+
             logger.debug(
                 f"[{activity_type}] [{stock_symbol}] td:[{statement['trade_date']}] qt:[{activity_quantity}] pr:[{statement['price']}] ex:[{statement['exchange_rate']}]"
             )
 
             if activity_quantity < 0:
-                stock_symbol = stock_symbol.replace(".OLD", "")
-                if stock_symbol not in purchases or len(purchases[stock_symbol]) == 0:
-                    logging.warn(f"No purchase information found for: [{stock_symbol}].")
-                    continue
-
-                stock_queue = purchases[stock_symbol]
-                logger.debug(f"Before surrender: {stock_queue}")
-
-                adjust_quantity(stock_queue, abs(activity_quantity))
-                logger.debug(f"After surrender: {stock_queue}")
+                ssp_surrendered_data[stock_symbol] = {
+                    "quantity": abs(activity_quantity),
+                    "price": statement["price"],
+                }
                 continue
 
             stock_queue = purchases.get(stock_symbol, deque())
             logger.debug(f"Before addition: {stock_queue}")
 
-            stock_queue.append(
-                {
-                    "price": statement["price"] * statement["exchange_rate"],
-                    "price_usd": statement["price"],
-                    "quantity": activity_quantity,
-                    "trade_date": statement["trade_date"],
-                }
-            )
+            if stock_symbol not in ssp_surrendered_data:
+                logging.warn(f"No SSP surrender information found for: [{stock_symbol}].")
+                continue
+
+            surrendered_data = ssp_surrendered_data[stock_symbol]
+            ssp_quantity_ratio = abs(activity_quantity) / surrendered_data["quantity"]
+            ssp_price_ratio = statement["price"] / surrendered_data["price"]
+
+            logger.debug(f"SSP quantity ratio: [{ssp_quantity_ratio}], price ratio: [{ssp_price_ratio}].")
+            adjust_stock_data(stock_queue, ssp_quantity_ratio, ssp_price_ratio)
             logger.debug(f"After addition: {stock_queue}")
+            del ssp_surrendered_data[stock_symbol]
 
     return sales, calculate_remaining_purchases(purchases)
 
@@ -130,10 +130,10 @@ def calculate_remaining_purchases(purchases):
                 {
                     **purchase,
                     **{
-                        "price_in_currency": (purchase["price_usd"] * purchase["quantity"]).quantize(
+                        "price_in_currency": (purchase["price"] * purchase["quantity"]).quantize(
                             decimal.Decimal(NAP_DIGIT_PRECISION)
                         ),
-                        "price": (purchase["price"] * purchase["quantity"]).quantize(
+                        "price": (purchase["price"] * purchase["exchange_rate"] * purchase["quantity"]).quantize(
                             decimal.Decimal(NAP_DIGIT_PRECISION)
                         ),
                     },

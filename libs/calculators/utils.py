@@ -8,15 +8,21 @@ from libs import NAP_DATE_FORMAT, NAP_DIGIT_PRECISION
 
 def get_avg_purchase_price(stock_queue):
     if len(stock_queue) == 1:
-        return stock_queue[0]["price"]
+        return stock_queue[0]["price"] * stock_queue[0]["exchange_rate"]
 
     price = 0
     quantity = 0
     for data in stock_queue:
-        price += data["price"] * data["quantity"]
+        price += data["price"] * data["exchange_rate"] * data["quantity"]
         quantity += data["quantity"]
 
     return price / quantity
+
+
+def adjust_stock_data(stock_queue, ssp_quantity_ratio, ssp_price_ratio):
+    for data in stock_queue:
+        data["quantity"] *= ssp_quantity_ratio
+        data["price"] *= ssp_price_ratio
 
 
 def adjust_quantity(stock_queue, sold_quantity):
@@ -41,7 +47,7 @@ def aggregate_stock_data_by_date(stock_queue):
 
         found_same_date_purchase = False
         for data in aggregated_stock_data:
-            if purchase["trade_date"] == data["trade_date"] and purchase["price_usd"] == data["price_usd"]:
+            if purchase["trade_date"] == data["trade_date"] and purchase["price"] == data["price"]:
                 data["quantity"] += purchase["quantity"]
                 found_same_date_purchase = True
 
