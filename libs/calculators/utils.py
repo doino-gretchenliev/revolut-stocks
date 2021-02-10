@@ -8,15 +8,17 @@ from libs import NAP_DATE_FORMAT, NAP_DIGIT_PRECISION
 
 def get_avg_purchase_price(stock_queue):
     if len(stock_queue) == 1:
-        return stock_queue[0]["price"] * stock_queue[0]["exchange_rate"]
+        return stock_queue[0]["price"] * stock_queue[0]["exchange_rate"], stock_queue[0]["price"]
 
     price = 0
+    price_in_currency = 0
     quantity = 0
     for data in stock_queue:
         price += data["price"] * data["exchange_rate"] * data["quantity"]
+        price_in_currency += data["price"] * data["quantity"]
         quantity += data["quantity"]
 
-    return price / quantity
+    return price / quantity, price_in_currency / quantity
 
 
 def adjust_stock_data(stock_queue, ssp_quantity_ratio, ssp_price_ratio):

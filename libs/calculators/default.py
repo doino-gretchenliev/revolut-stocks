@@ -57,11 +57,14 @@ def calculate_win_loss(statements):
 
             logger.debug(f"Before adjustment: {stock_queue}")
 
-            avg_purchase_price = get_avg_purchase_price(stock_queue)
+            avg_purchase_price, avg_purchase_price_in_currency = get_avg_purchase_price(stock_queue)
             logger.debug(f"AVG price: [{avg_purchase_price}]")
 
             purchase_price = avg_purchase_price * activity_quantity
             sell_price = statement["amount"] * statement["exchange_rate"]
+
+            purchase_price_in_currency = avg_purchase_price_in_currency * activity_quantity
+            sell_price_in_currency = statement["amount"]
 
             sale = {
                 "symbol": stock_symbol,
@@ -72,6 +75,8 @@ def calculate_win_loss(statements):
                 "sell_exchange_rate": statement["exchange_rate"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
                 "profit": decimal.Decimal(0),
                 "loss": decimal.Decimal(0),
+                "profit_in_currency": decimal.Decimal(0),
+                "loss_in_currency": decimal.Decimal(0),
             }
 
             profit_loss = (sale["sell_price"] - sale["purchase_price"]).quantize(decimal.Decimal(NAP_DIGIT_PRECISION))
@@ -79,6 +84,14 @@ def calculate_win_loss(statements):
                 sale["profit"] = profit_loss
             else:
                 sale["loss"] = profit_loss
+
+            profit_loss = (sell_price_in_currency - purchase_price_in_currency).quantize(
+                decimal.Decimal(NAP_DIGIT_PRECISION)
+            )
+            if profit_loss > 0:
+                sale["profit_in_currency"] = profit_loss
+            else:
+                sale["loss_in_currency"] = profit_loss
 
             sales.append(sale)
 

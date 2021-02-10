@@ -71,7 +71,12 @@ def export_app8_part1(filename, purchases):
 def export_app5_table2(filename, sales):
     sales = [
         {
-            **{k: v for k, v in sale.items() if k not in ["symbol", "avg_purchase_price", "sell_exchange_rate"]},
+            **{
+                k: v
+                for k, v in sale.items()
+                if k
+                not in ["symbol", "avg_purchase_price", "sell_exchange_rate", "profit_in_currency", "loss_in_currency"]
+            },
             **{"code": 508},
         }
         for sale in sales

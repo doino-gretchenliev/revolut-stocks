@@ -23,6 +23,7 @@ parser.add_argument(
     default="revolut",
     required=False,
 )
+parser.add_argument("-c", dest="in_currency", help="Show profit/loss in currency.", action="store_true")
 parser.add_argument("-v", dest="verbose", help="Enable verbose output.", action="store_true")
 parsed_args = parser.parse_args()
 
@@ -34,7 +35,13 @@ if parsed_args.verbose:
 
 
 def main():
-    process(parsed_args.input_dir, parsed_args.output_dir, parsed_args.parser, parsed_args.use_bnb)
+    process(
+        parsed_args.input_dir,
+        parsed_args.output_dir,
+        parsed_args.parser,
+        parsed_args.use_bnb,
+        parsed_args.in_currency,
+    )
 
 
 if __name__ == "__main__":

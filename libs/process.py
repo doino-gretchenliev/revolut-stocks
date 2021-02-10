@@ -28,7 +28,7 @@ else:
             supported_parsers[parser_name] = parser
 
 
-def process(input_dir, output_dir, parser_name, use_bnb):
+def process(input_dir, output_dir, parser_name, use_bnb, in_currency=False):
     logger.debug(f"Supported parsers: [{supported_parsers}]")
 
     logger.info(f"Parsing statement files.")
@@ -75,6 +75,10 @@ def process(input_dir, output_dir, parser_name, use_bnb):
         export_app8_part1(os.path.join(output_dir, "app8-part1.csv"), purchases)
 
     if sales is not None:
+        if in_currency:
+            win_loss_in_currency = sum(item["profit_in_currency"] + item["loss_in_currency"] for item in sales)
+            logger.info(f"Profit/Loss: {win_loss_in_currency} USD.")
+
         win_loss = sum(item["profit"] + item["loss"] for item in sales)
         logger.info(f"Profit/Loss: {win_loss} lev.")
 
