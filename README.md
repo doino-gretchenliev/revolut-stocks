@@ -1,14 +1,14 @@
 # Revolut Stocks calculator for Bulgarian National Revenue Agency
 
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/doino-gretchenliev/revolut-stocks?label=version&sort=semver)
-![GitHub Release Date](https://img.shields.io/github/release-date/doino-gretchenliev/revolut-stocks)
-![GitHub issues by-label](https://img.shields.io/github/issues/doino-gretchenliev/revolut-stocks/bug)
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/doino-gretchenliev/revolut-stocks/Run%20tests/main?label=tests)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/doino-gretchenliev/revolut-stocks?label=version&sort=semver&link=https://github.com/doino-gretchenliev/revolut-stocks/releases/latest)
+![GitHub Release Date](https://img.shields.io/github/release-date/doino-gretchenliev/revolut-stocks?link=https://github.com/doino-gretchenliev/revolut-stocks/releases/latest)
+![GitHub issues by-label](https://img.shields.io/github/issues/doino-gretchenliev/revolut-stocks/bug?link=https://github.com/doino-gretchenliev/revolut-stocks/labels/bug)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/doino-gretchenliev/revolut-stocks/Run%20tests/main?label=tests&link=https%3A%2F%2Fgithub.com%2Fdoino-gretchenliev%2Frevolut-stocks%2Factions%3Fquery%3Dworkflow%253A%2522Run%2Btests%2522%2Bbranch%253Amain)
 ![GitHub all releases](https://img.shields.io/github/downloads/doino-gretchenliev/revolut-stocks/total)
-![Docker Pulls](https://img.shields.io/docker/pulls/gretch/nap-stocks-calculator)
+![Docker Pulls](https://img.shields.io/docker/pulls/gretch/nap-stocks-calculator?link=https://hub.docker.com/repository/docker/gretch/nap-stocks-calculator)
 [![GitHub stars](https://img.shields.io/github/stars/doino-gretchenliev/revolut-stocks)](https://github.com/doino-gretchenliev/revolut-stocks/stargazers)
 ![GitHub watchers](https://img.shields.io/github/watchers/doino-gretchenliev/revolut-stocks?label=watch)
-![GitHub followers](https://img.shields.io/github/followers/doino-gretchenliev?label=Follow)
+![GitHub followers](https://img.shields.io/github/followers/doino-gretchenliev?label=Follow&link=https://github.com/doino-gretchenliev)
 [![GitHub license](https://img.shields.io/github/license/doino-gretchenliev/revolut-stocks)](https://github.com/doino-gretchenliev/revolut-stocks/blob/main/LICENSE)
 
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40doino_gretch)](https://twitter.com/doino_gretch)
