@@ -1,5 +1,18 @@
 # Revolut Stocks calculator for Bulgarian National Revenue Agency
 
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/doino-gretchenliev/revolut-stocks?label=version&sort=semver)
+![GitHub Release Date](https://img.shields.io/github/release-date/doino-gretchenliev/revolut-stocks)
+![GitHub issues by-label](https://img.shields.io/github/issues/doino-gretchenliev/revolut-stocks/bug)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/doino-gretchenliev/revolut-stocks/Run%20tests/main?label=tests)
+![GitHub all releases](https://img.shields.io/github/downloads/doino-gretchenliev/revolut-stocks/total)
+![Docker Pulls](https://img.shields.io/docker/pulls/gretch/nap-stocks-calculator)
+[![GitHub stars](https://img.shields.io/github/stars/doino-gretchenliev/revolut-stocks)](https://github.com/doino-gretchenliev/revolut-stocks/stargazers)
+![GitHub watchers](https://img.shields.io/github/watchers/doino-gretchenliev/revolut-stocks?label=watch)
+![GitHub followers](https://img.shields.io/github/followers/doino-gretchenliev?label=Follow)
+[![GitHub license](https://img.shields.io/github/license/doino-gretchenliev/revolut-stocks)](https://github.com/doino-gretchenliev/revolut-stocks/blob/main/LICENSE)
+
+[![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40doino_gretch)](https://twitter.com/doino_gretch)
+
 ![Cat owe taxes joke.](https://www.thefunnybox.com/wp-content/uploads/2011/09/cat-owes-taxes.jpg)
 
 ## Information
@@ -36,31 +49,39 @@ Note: The calculator is not natively tested on Windows OS. When using Windows it
 
 #### Install dependencies
 
-`pip install -r requirements.txt`
+```console
+$ pip install -r requirements.txt
+```
 
 #### Run (single parser)
 
-`python stocks.py -i <path_to_input_dir> -o <path_to_output_dir>`
+```console
+$ python stocks.py -i <path_to_input_dir> -o <path_to_output_dir>
+```
 
 #### Run (multiple parsers)
 
-In order to use multiple parsers, you need to sort your statement files into a corresponding parser directory under the selected input directory. For example:
+In order to use multiple parsers, you need to sort your statement files into a corresponding parser directory under the selected input directory. For example:
 
-```sh
+```console
 /input-directory/revolut - directory contains Revolut statement files
 /input-directory/trading212 - directory contains Trading 212 statement files
 ```
 
 You can use the help command to list supported parsers with their names.
 
-`python stocks.py -i <path_to_input_dir> -o <path_to_output_dir> -p <parser_name#1> -p <parser_name#2> ...`
+```console
+$ python stocks.py -i <path_to_input_dir> -o <path_to_output_dir> -p <parser_name_1> -p <parser_name_2> ...
+```
 
 #### Help
 
-`python stocks.py -h`
+```console
+$ python stocks.py -h
+```
 
 **Output**:
-```sh
+```console
 [INFO]: Collecting statement files.
 [INFO]: Collected statement files for processing: ['input/statement-3cbc62e0-2e0c-44a4-ae0c-8daa4b7c41bc.pdf', 'input/statement-19ed667d-ba66-4527-aa7a-3a88e9e4d613.pdf'].
 [INFO]: Parsing statement files.
@@ -77,6 +98,19 @@ You can use the help command to list supported parsers with their names.
 
 ![00s joke.](https://media.tenor.com/images/faf934d304adf3abe163e3a6d192c178/tenor.gif)
 
+### Docker
+
+Docker Hub images are built and published by [GitHub Actions Workflow](https://github.com/doino-gretchenliev/revolut-stocks/actions?query=workflow%3A%22Publish+Docker+image%22). The following tags are available:
+
+* `main` - the image is built from the latest commit in the main branch.
+* `<version>` - the image is built from the released version.
+
+#### Run
+
+```console
+$ docker run --rm -v <path_to_input_dir>:/input:ro -v <path_to_output_dir>:/output gretch/nap-stocks-calculator:main -i /input -o /output
+```
+
 ### Docker Compose
 
 #### Prepare
@@ -85,7 +119,9 @@ Replace `<path_to_input_dir>` and `<path_to_output_dir>` placeholders in the `do
 
 #### Run
 
-`docker-compose up --build`
+```console
+$ docker-compose up --build
+```
 
 ## Results
 
@@ -100,7 +136,7 @@ Replace `<path_to_input_dir>` and `<path_to_output_dir>` placeholders in the `do
 ## Errors
 
 Errors are being reported along with an `ERROR` label. For example:
-```sh
+```console
 [ERROR]: Unable to get exchange rate from BNB. Please, try again later.
 Traceback (most recent call last):
   File "/mnt/c/Users/doino/Personal/revolut-stocks/libs/exchange_rates.py", line 57, in query_exchange_rates
@@ -168,13 +204,13 @@ A generic parser for statements in CSV format. So for there, two identified usag
 
 In order for the file to be correctly parsed the following requirements should be met:
 1. The following columns should be presented:
-   1. `trade_date`: The column should contain the date of the trade in dd.MM.YYYY format.
-   2. `activity_type`: The current row activity type. The following types are supported: ["SELL", "BUY", "DIV", "DIVNRA", "SSP", "MAS"]
-   3. `company`: The name of the stock company. For example Apple INC.
-   4. `symbol`: The symbol of the stock. For example AAPL.
-   5. `quantity`: The quantity of the activity. In order to correctly recognize surrender from addition SSP and MAS activities, the quantity should be positive or negative. For all other activity types, there is no such requirement(it could be an absolute value).
-   6. `price`: The activity price per share.
-   7. `amount`: The total amount of the activity. It should be a result of (quantity x price) + commissions + taxes.
+   1. `trade_date`: The column should contain the date of the trade in dd.MM.YYYY format.
+   2. `activity_type`: The current row activity type. The following types are supported: ["SELL", "BUY", "DIV", "DIVNRA", "SSP", "MAS"]
+   3. `company`: The name of the stock company. For example Apple INC.
+   4. `symbol`: The symbol of the stock. For example AAPL.
+   5. `quantity`: The quantity of the activity. In order to correctly recognize surrender from addition SSP and MAS activities, the quantity should be positive or negative. For all other activity types, there is no such requirement(it could be an absolute value).
+   6. `price`: The activity price per share.
+   7. `amount`: The total amount of the activity. It should be a result of (quantity x price) + commissions + taxes.
 2. The first row should contain headers, indicating the column name, according to the mapping above. There is *no* requirement for columns to be presented in any particular order.
 3. The activities, listed in the file/s should be sorted from the earliest trading date to the latest one. The earliest date should be located at the very begging of the file. When you're processing multiple statement files you can append them together(no need to merge the activities).
 4. DIVNRA, which represents the tax that was paid upon receiving dividends, should follow DIV activity. Other activities could be listed between those two events. DIVNRA is not required for all DIVs but would trigger calculations for dividend tax owed to NAP. DIV activity amount should be equal to dividend value + tax.

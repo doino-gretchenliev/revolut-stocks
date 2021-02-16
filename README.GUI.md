@@ -27,9 +27,18 @@ All requirements for building the main application are required for building the
 
 1. Open Command Prompt or PowerShell.
 2. Navigate to the root of the application repository.
-3. Install main application requirements via: `pip install -r requirements.txt`
-4. Install GUI requirements via: `pip install -r requirements.gui.txt`
-5. Build via: `python -m PyInstaller gui.spec`
+3. Install main application requirements via:
+```console
+$ pip install -r requirements.txt
+```
+4. Install GUI requirements via:
+```console
+$ pip install -r requirements.gui.txt
+```
+5. Build via:
+```console
+$ python -m PyInstaller gui.spec
+```
 6. The GUI `.exe` file will be located under `dist` directory. In order to debug the app, you can start it via the CLI.
 
 ### Adding support for new parsers
@@ -39,6 +48,6 @@ In order to add support for a new parser, you need to list the parser manually i
 ### Generate new spec file
 
 You can generate new pyinstaller spec file via:
-```sh
-python -m PyInstaller --name "NAP Stocks Calculator" --clean --onefile --noconfirm --hidden-import="libs.parsers" --hidden-import="libs.parsers.*" ".\revolut-stocks\libs\gui\main.py"
+```console
+$ python -m PyInstaller --name "NAP Stocks Calculator" --clean --onefile --noconfirm --hidden-import="libs.parsers" --hidden-import="libs.parsers.*" ".\revolut-stocks\libs\gui\main.py"
 ```
