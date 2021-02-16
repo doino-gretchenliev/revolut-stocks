@@ -4,10 +4,10 @@
 [![GitHub Release Date](https://img.shields.io/github/release-date/doino-gretchenliev/revolut-stocks)](https://github.com/doino-gretchenliev/revolut-stocks/releases/latest)
 [![GitHub issues by-label](https://img.shields.io/github/issues/doino-gretchenliev/revolut-stocks/bug)](https://github.com/doino-gretchenliev/revolut-stocks/labels/bug)
 [![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/doino-gretchenliev/revolut-stocks/Run%20tests/main?label=tests)](https://github.com/doino-gretchenliev/revolut-stocks/actions?query=workflow%3A%22Run+tests%22+branch%3Amain)
-![GitHub all releases](https://img.shields.io/github/downloads/doino-gretchenliev/revolut-stocks/total)
+[![GitHub all releases](https://img.shields.io/github/downloads/doino-gretchenliev/revolut-stocks/total)](https://github.com/doino-gretchenliev/revolut-stocks/releases)
 [![Docker Pulls](https://img.shields.io/docker/pulls/gretch/nap-stocks-calculator)](https://hub.docker.com/repository/docker/gretch/nap-stocks-calculator)
 [![GitHub stars](https://img.shields.io/github/stars/doino-gretchenliev/revolut-stocks)](https://github.com/doino-gretchenliev/revolut-stocks/stargazers)
-![GitHub watchers](https://img.shields.io/github/watchers/doino-gretchenliev/revolut-stocks?label=watch)
+[![GitHub watchers](https://img.shields.io/github/watchers/doino-gretchenliev/revolut-stocks?label=watch)](https://github.com/doino-gretchenliev/revolut-stocks/watchers)
 [![GitHub followers](https://img.shields.io/github/followers/doino-gretchenliev?label=Follow)](https://github.com/doino-gretchenliev)
 [![GitHub license](https://img.shields.io/github/license/doino-gretchenliev/revolut-stocks)](https://github.com/doino-gretchenliev/revolut-stocks/blob/main/LICENSE)
 
