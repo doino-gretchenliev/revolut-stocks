@@ -135,3 +135,7 @@ get_exchange_rates.py
 
 #VS code
 .vscode
+
+# Ignore file directories
+input/
+output/

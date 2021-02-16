@@ -17,9 +17,7 @@ logger = logging.getLogger("parsers")
 
 REVOLUT_DATE_FORMAT = "%m/%d/%Y"
 
-REVOLUT_ACTIVITY_TYPES = (
-    ["SELL", "BUY", "SSP", "SSO", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
-)
+REVOLUT_ACTIVITY_TYPES = ["SELL", "BUY", "SSP", "SSO", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
 REVOLUT_CASH_ACTIVITY_TYPES = ["CDEP", "CSD"]
 REVOLUT_OUT_OF_ORDER_ACTIVITY_TYPES = ["SSP", "MAS"]
 REVOLUT_UNSUPPORTED_ACTIVITY_TYPES = ["SC", "NC", "MA"]
@@ -164,6 +162,7 @@ class Parser(StatementFilesParser):
         for index, statement in enumerate(statements):
             if statement["activity_type"] not in REVOLUT_OUT_OF_ORDER_ACTIVITY_TYPES:
                 return index
+        return 0
 
     def parse(self):
         statements = []
