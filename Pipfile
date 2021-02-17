@@ -25,7 +25,7 @@ pywin32-ctypes = "==0.2.0"
 pytest = "==6.2.2"
 csv-diff = "==1.0"
 xmldiff = "==2.4"
-black = "*"
+black = "==20.8b0"
 flake8 = "*"
 
 [requires]
