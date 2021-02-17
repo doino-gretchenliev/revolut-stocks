@@ -28,9 +28,6 @@ xmldiff = "==2.4"
 black = "==20.8b0"
 flake8 = "*"
 
-[requires]
-python_version = "3.8"
-
 [scripts]
 start = "python stocks.py"
 lint = "flake8 ."
