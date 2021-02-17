@@ -1,8 +1,0 @@
-altgraph==0.17
-future==0.18.2
-pefile==2019.4.18
-pyinstaller==4.2
-pyinstaller-hooks-contrib==2020.11
-PyQt5==5.15.2
-PyQt5-sip==12.8.1
-pywin32-ctypes==0.2.0

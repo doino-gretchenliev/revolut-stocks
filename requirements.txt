@@ -1,8 +1,0 @@
-bitarray==1.6.3
-lxml==4.6.2
-pdfreader==0.1.7
-Pillow==8.1.0
-pycryptodome==3.9.9
-python-dateutil==2.8.1
-six==1.15.0
-testresources==2.0.0

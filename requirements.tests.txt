@@ -1,3 +1,0 @@
-pytest==6.2.2
-csv-diff==1.0
-xmldiff==2.4
