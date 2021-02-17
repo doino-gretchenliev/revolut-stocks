@@ -1,7 +1,9 @@
 FROM python:3.8-buster AS builder
 
-COPY requirements.txt .
-RUN pip install --user -r requirements.txt
+COPY Pipfile .
+COPY Pipfile.lock .
+RUN python -m pip install pipenv
+RUN python -m pipenv install
 
 FROM python:3.8-buster
 
@@ -13,4 +15,4 @@ COPY --from=builder /root/.local /root/.local
 COPY libs ./libs
 COPY stocks.py .
 
-ENTRYPOINT [ "python3", "stocks.py" ]
+ENTRYPOINT [ "pipenv", "run", "start" ]

@@ -25,9 +25,12 @@ pywin32-ctypes = "==0.2.0"
 pytest = "==6.2.2"
 csv-diff = "==1.0"
 xmldiff = "==2.4"
+black = "*"
+flake8 = "*"
 
 [requires]
 python_version = "3.8"
 
 [scripts]
 start = "python stocks.py"
+lint = "flake8 ."

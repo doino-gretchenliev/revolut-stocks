@@ -6,6 +6,7 @@ decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
 from libs import BNB_DATE_FORMAT
 
+
 def load_exchange_rates():
     result = {}
 
