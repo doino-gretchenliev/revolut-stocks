@@ -61,6 +61,14 @@
     </part38al1>
     <sum81al1>9.33</sum81al1>
     <stocks>
+      <!-- === AAPL === -->
+      <stocksenum>
+        <country>САЩ</country>
+        <count>0.14</count>
+        <acquiredate>2020-08-17</acquiredate>
+        <priceincurrency>66.24</priceincurrency>
+        <price>109.29</price>
+      </stocksenum>
       <!-- === AMD === -->
       <stocksenum>
         <country>САЩ</country>
@@ -234,19 +242,9 @@
       <rowenum>
         <code>508</code>
         <transferdate>2020-06-29</transferdate>
-        <sellvalue>90.29</sellvalue>
-        <buyvalue>89.66</buyvalue>
-        <profit>0.63</profit>
-        <loss>0</loss>
-        <egn></egn>
-        <name></name>
-      </rowenum>
-      <rowenum>
-        <code>508</code>
-        <transferdate>2020-06-29</transferdate>
         <sellvalue>8146.05</sellvalue>
-        <buyvalue>8127.96</buyvalue>
-        <profit>18.09</profit>
+        <buyvalue>8127.18</buyvalue>
+        <profit>18.87</profit>
         <loss>0</loss>
         <egn></egn>
         <name></name>
@@ -265,8 +263,8 @@
         <code>508</code>
         <transferdate>2020-07-08</transferdate>
         <sellvalue>4607.78</sellvalue>
-        <buyvalue>4561.27</buyvalue>
-        <profit>46.51</profit>
+        <buyvalue>4557.98</buyvalue>
+        <profit>49.80</profit>
         <loss>0</loss>
         <egn></egn>
         <name></name>
@@ -305,9 +303,9 @@
         <code>508</code>
         <transferdate>2020-07-29</transferdate>
         <sellvalue>9411.18</sellvalue>
-        <buyvalue>9898.50</buyvalue>
+        <buyvalue>9897.35</buyvalue>
         <profit>0</profit>
-        <loss>487.32</loss>
+        <loss>486.17</loss>
         <egn></egn>
         <name></name>
       </rowenum>
@@ -585,8 +583,8 @@
         <code>508</code>
         <transferdate>2020-08-12</transferdate>
         <sellvalue>8819.10</sellvalue>
-        <buyvalue>8678.17</buyvalue>
-        <profit>140.93</profit>
+        <buyvalue>8669.29</buyvalue>
+        <profit>149.81</profit>
         <loss>0</loss>
         <egn></egn>
         <name></name>
@@ -665,8 +663,8 @@
         <code>508</code>
         <transferdate>2020-08-14</transferdate>
         <sellvalue>7591.18</sellvalue>
-        <buyvalue>7557.37</buyvalue>
-        <profit>33.81</profit>
+        <buyvalue>7554.78</buyvalue>
+        <profit>36.40</profit>
         <loss>0</loss>
         <egn></egn>
         <name></name>
@@ -685,8 +683,8 @@
         <code>508</code>
         <transferdate>2020-08-17</transferdate>
         <sellvalue>2289.62</sellvalue>
-        <buyvalue>2272.05</buyvalue>
-        <profit>17.57</profit>
+        <buyvalue>2271.98</buyvalue>
+        <profit>17.64</profit>
         <loss>0</loss>
         <egn></egn>
         <name></name>
@@ -775,9 +773,9 @@
         <code>508</code>
         <transferdate>2020-08-18</transferdate>
         <sellvalue>752.85</sellvalue>
-        <buyvalue>755.45</buyvalue>
+        <buyvalue>755.60</buyvalue>
         <profit>0</profit>
-        <loss>2.60</loss>
+        <loss>2.75</loss>
         <egn></egn>
         <name></name>
       </rowenum>
@@ -1582,10 +1580,10 @@
         <name></name>
       </rowenum>
     </table2>
-    <t2row6pr>662691.49</t2row6pr>
-    <t2row6ls>5730.71</t2row6ls>
-    <t2row7>656960.78</t2row7>
-    <part2row1>656960.78</part2row1>
-    <part2row4>656960.78</part2row4>
+    <t2row6pr>662706.47</t2row6pr>
+    <t2row6ls>5729.71</t2row6ls>
+    <t2row7>656976.76</t2row7>
+    <part2row1>656976.76</part2row1>
+    <part2row4>656976.76</part2row4>
   </app5>
 </dec50>

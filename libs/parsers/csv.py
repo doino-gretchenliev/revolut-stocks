@@ -19,7 +19,7 @@ CSV_DATE_FORMATS = [
     "%m/%d/%Y",
     "%Y/%m/%d",
 ]
-CSV_ACTIVITY_TYPES = ["SELL", "BUY", "SSP", "SSO", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
+CSV_ACTIVITY_TYPES = ["SELL", "SELL CANCEL", "BUY", "SSP", "SSO", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
 CSV_REQUIRED_COLUMNS = ["trade_date", "activity_type", "company", "symbol", "quantity", "price", "amount"]
 
 
