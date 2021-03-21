@@ -19,7 +19,7 @@ CSV_DATE_FORMATS = [
     "%m/%d/%Y",
     "%Y/%m/%d",
 ]
-CSV_ACTIVITY_TYPES = ["SELL", "SELL CANCEL", "BUY", "SSP", "SSO", "MAS"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
+CSV_ACTIVITY_TYPES = ["SELL", "SELL CANCEL", "BUY", "SSP", "SSO", "MAS", "SC"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
 CSV_REQUIRED_COLUMNS = ["trade_date", "activity_type", "company", "symbol", "quantity", "price", "amount"]
 
 
@@ -70,7 +70,7 @@ class Parser(StatementFilesParser):
                     "activity_type": row[headers["activity_type"]],
                     "symbol": row[headers["symbol"]],
                     "company": row[headers["company"]],
-                    "symbol_description": row[headers["symbol"]] + " - " + row[headers["company"]],
+                    "symbol_description": row[headers["symbol_description"]],
                     "quantity": decimal.Decimal(self.clean_number(row[headers["quantity"]])),
                     "price": decimal.Decimal(self.clean_number(row[headers["price"]])),
                     "amount": decimal.Decimal(self.clean_number(row[headers["amount"]])),

@@ -18,6 +18,16 @@ import decimal
 decimal.getcontext().rounding = decimal.ROUND_HALF_UP
 
 
+def get_old_symbol(symbol_description):
+    try:
+        start_index = symbol_description.index("SC:") + 3
+        end_index = symbol_description.index(">", start_index) - 1
+        return symbol_description[start_index:end_index]
+    except ValueError:
+        logging.error(f"Could not find old symbol for symbol change: [{symbol_description}].")
+        raise SystemExit(1)
+
+
 def calculate_sales(statements):
     purchases = {}
     sales = []
@@ -25,6 +35,19 @@ def calculate_sales(statements):
 
     for index, statement in enumerate(statements):
         stock_symbol = statement.get("symbol", None)
+
+        if statement["activity_type"] == "SC":
+            old_symbol = get_old_symbol(statement["symbol_description"])
+            logger.debug(f"[SC] ns:[{stock_symbol}] os:[{old_symbol}]")
+
+            if old_symbol in sales:
+                sales[stock_symbol] = sales[old_symbol]
+
+            if old_symbol in purchases:
+                purchases[stock_symbol] = purchases[old_symbol]
+
+            if old_symbol in ssp_surrendered_data:
+                ssp_surrendered_data[stock_symbol] = ssp_surrendered_data[old_symbol]
 
         if statement["activity_type"] == "BUY":
             activity_quantity = abs(statement.get("quantity", 0))
@@ -206,6 +229,12 @@ def calculate_dividends_tax(dividends):
 def calculate_dividends(statements):
     dividends = {}
     for statement in statements:
+
+        if statement["activity_type"] == "SC":
+            old_symbol = get_old_symbol(statement["symbol_description"])
+
+            if old_symbol in dividends:
+                dividends[stock_symbol] = dividends[old_symbol]
 
         if statement["activity_type"] in RECEIVED_DIVIDEND_ACTIVITY_TYPES or statement["activity_type"] in TAX_DIVIDEND_ACTIVITY_TYPES:
             stock_symbol = statement["symbol"]
