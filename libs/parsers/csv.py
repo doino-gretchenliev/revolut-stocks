@@ -20,7 +20,7 @@ CSV_DATE_FORMATS = [
     "%Y/%m/%d",
 ]
 CSV_ACTIVITY_TYPES = ["SELL", "SELL CANCEL", "BUY", "SSP", "SSO", "MAS", "SC"] + RECEIVED_DIVIDEND_ACTIVITY_TYPES + TAX_DIVIDEND_ACTIVITY_TYPES
-CSV_REQUIRED_COLUMNS = ["trade_date", "activity_type", "company", "symbol", "quantity", "price", "amount"]
+CSV_REQUIRED_COLUMNS = ["trade_date", "activity_type", "company", "symbol", "quantity", "price", "amount", "symbol_description"]
 
 
 class Parser(StatementFilesParser):
