@@ -158,10 +158,26 @@ class Parser(StatementFilesParser):
 
         return activities
 
-    def get_first_non_ssp_activity_index(self, statements):
+    def get_first_non_out_of_order_activity_index(self, statements):
         for index, statement in enumerate(statements):
             if statement["activity_type"] not in REVOLUT_OUT_OF_ORDER_ACTIVITY_TYPES:
                 return index
+
+        return None
+
+    def get_sorting_date(self, statements):
+        sorting_index = self.get_first_non_out_of_order_activity_index(statements)
+
+        if sorting_index is None:
+            if not self.sorting_dates:
+                logger.error("No previous purchase information found for out of order activities.")
+                raise SystemExit(1)
+
+            return self.sorting_dates[-1]
+
+        trade_date = statements[sorting_index]["trade_date"]
+        self.sorting_dates.append(trade_date)
+        return trade_date
 
     def parse(self):
         statements = []
@@ -183,7 +199,8 @@ class Parser(StatementFilesParser):
                     continue
                 statements.append(activities)
 
-        statements = sorted(statements, key=lambda k: k[self.get_first_non_ssp_activity_index(k)]["trade_date"])
+        self.sorting_dates = []
+        statements = sorted(statements, key=lambda k: self.get_sorting_date(k))
         return [activity for activities in statements for activity in activities]
 
     @staticmethod

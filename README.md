@@ -170,6 +170,10 @@ The calculator found unsupported activity type/s. Please, open an issue and incl
 
 The calculator, while trying to perform the SSP surrender shares operation, was unable to find the previously purchased shares for the same stock symbol. Please, ensure there is a statement file in the input directory, containing the original purchase.
 
+### "No previous purchase information found for out of order activities"
+
+In case you've received the error, please name your statement files by the number of their month. For example: January = 1.pdf, February = 2.pdf and etc.
+
 ## Import
 
 NOTE: Importing `dec50_2020_data.xml` will clear all filling in your current tax declaration.
