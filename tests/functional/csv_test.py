@@ -55,6 +55,6 @@ def test_single_csv_parser(tmp_dir):
     assert_csv_diff(diff)
 
     golden = os.path.join(golden_dir, "dec50_2020_data.xml")
-    output = os.path.join(output_dir, "dec50_2020_data.xml")
+    output = os.path.join(output_dir, "dec50_2021_data.xml")
 
     assert len(main.diff_files(golden, output)) == 0
