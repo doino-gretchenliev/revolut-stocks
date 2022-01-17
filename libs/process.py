@@ -104,9 +104,9 @@ def process(input_dir, output_dir, parser_names, use_bnb, in_currency=False):
 
         export_app5_table2(os.path.join(output_dir, "app5-table2.csv"), merged_sales)
 
-    logger.info(f"Generating [dec50_2020_data.xml] file.")
+    logger.info(f"Generating [dec50_2021_data.xml] file.")
     export_to_xml(
-        os.path.join(output_dir, "dec50_2020_data.xml"),
+        os.path.join(output_dir, "dec50_2021_data.xml"),
         dividend_taxes,
         merged_sales if merged_sales is not None else None,
         remaining_purchases if remaining_purchases is not None else None,

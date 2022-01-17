@@ -19,7 +19,7 @@
 
 Processing and calculating the required information about stock possession and operation is complicated and time-consuming. So that brought the idea of developing a calculator that is able to automate the process from end-to-end.
 
-Revolut Stock calculator is able to parse Revolut statement documents and provide a ready-to-use tax declaration file(`dec50_2020_data.xml`), that you can import into NAP online system. Each part of the declaration is also exported as `csv` file for verification.
+Revolut Stock calculator is able to parse Revolut statement documents and provide a ready-to-use tax declaration file(`dec50_2021_data.xml`), that you can import into NAP online system. Each part of the declaration is also exported as `csv` file for verification.
 
 ## How it works
 
@@ -92,7 +92,7 @@ $ python stocks.py -h
 [INFO]: Generating [app5-table2.csv] file.
 [INFO]: Calculating dividends information.
 [INFO]: Generating [app8-part4-1.csv] file.
-[INFO]: Generating [dec50_2020_data.xml] file.
+[INFO]: Generating [dec50_2021_data.xml] file.
 [INFO]: Profit/Loss: 1615981 lev.
 ```
 
@@ -127,7 +127,7 @@ $ docker-compose up --build
 
 | Output file           | NAP mapping                                      | Description                                                               |
 | --------------------- | ------------------------------------------------ | ------------------------------------------------------------------------- |
-| `dec50_2020_data.xml` | `Декларация по чл.50 от ЗДДФЛ, Приложение 5 и 8` | Tax declaration - ready for import.                                       |
+| `dec50_2021_data.xml` | `Декларация по чл.50 от ЗДДФЛ, Приложение 5 и 8` | Tax declaration - ready for import.                                       |
 | `statements.csv`      | N/A                                              | Verification file to ensure correct parsing. Should be verified manually. |
 | `app5-table2.csv`     | `Приложение 5, Таблица 2`                        |                                                                           |
 | `app8-part1.csv`      | `Приложение 8, Част ІV, 1`                       |                                                                           |
@@ -177,9 +177,9 @@ In case you've received the error, please name your statement files by the numbe
 
 ## Import
 
-NOTE: Importing `dec50_2020_data.xml` will clear all filling in your current tax declaration.
+NOTE: Importing `dec50_2021_data.xml` will clear all filling in your current tax declaration.
 
-The `dec50_2020_data.xml` file contains applications 5 and 8. It could be imported into NAP online system with the use of NAP web interface, navigating to `Декларации, документи или данни, подавани от физически лица/Декларации по ЗДДФЛ/Декларация по чл.50 от ЗДДФЛ` and clinking on `Импорт на файл` button.
+The `dec50_2021_data.xml` file contains applications 5 and 8. It could be imported into NAP online system with the use of NAP web interface, navigating to `Декларации, документи или данни, подавани от физически лица/Декларации по ЗДДФЛ/Декларация по чл.50 от ЗДДФЛ` and clinking on `Импорт на файл` button.
 
 During the import, a few errors will be reported. That's normal(see exceptions below). The reason for the errors is that the imported file contains data for applications 5 and 8 only, but the system expects a complete filling of the document. After the import, you can continue filling your tax declaration as usual. Don't forget to enable applications 5 and 8 under part 3 of the main document. After you enable them you should navigate to each application, verify the data and click `Потвърди` button.
 
