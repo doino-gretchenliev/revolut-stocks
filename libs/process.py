@@ -18,9 +18,10 @@ supported_parsers = {}
 if getattr(sys, "frozen", False):
     import libs.parsers.revolut as revolut
     import libs.parsers.trading212 as trading212
+    import libs.parsers.passfolio as passfolio
     import libs.parsers.csv as csv
 
-    supported_parsers = {"revolut": revolut.Parser, "trading212": trading212.Parser, "csv": csv.Parser}
+    supported_parsers = {"revolut": revolut.Parser, "trading212": trading212.Parser, "passfolio": passfolio.Parser, "csv": csv.Parser}
 else:
     parser_modules = [mod.name for mod in iter_modules(libs.parsers.__path__, "libs.parsers.")]
     for parser_module in parser_modules:
