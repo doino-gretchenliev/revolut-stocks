@@ -1,4 +1,4 @@
-# Revolut Stocks calculator for Bulgarian National Revenue Agency
+# Revolut Stocks calculator for Bulgarian National Revenue Agency(Discontinued)
 
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/doino-gretchenliev/revolut-stocks?label=version&sort=semver)](https://github.com/doino-gretchenliev/revolut-stocks/releases/latest)
 [![GitHub Release Date](https://img.shields.io/github/release-date/doino-gretchenliev/revolut-stocks)](https://github.com/doino-gretchenliev/revolut-stocks/releases/latest)
@@ -12,6 +12,9 @@
 [![GitHub license](https://img.shields.io/github/license/doino-gretchenliev/revolut-stocks)](https://github.com/doino-gretchenliev/revolut-stocks/blob/main/LICENSE)
 
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/fold_left.svg?style=social&label=Follow%20%40doino_gretch)](https://twitter.com/doino_gretch)
+
+## :exclamation: Discontinued
+This year the project required major refactoring on both parsing and calculations, as Revolut changed their statements format and NAP changed its form. The calculator has to work correctly(filing taxes is not a joke) and that requires maintenance on the code and the tests. Unfortunately, I don't have that time anymore(I really tried to). So the issue section is now closed and the project is no longer maintained by me. This year(2022) NAP made filing much easier(you don't have to list all stock transactions anymore), so I think my project served its purpose and it could be retired. :pensive:
 
 ![Cat owe taxes joke.](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8MXTmPL3Dvo0mcy_PjBHKY7PAnhLfO4DG1g&usqp=CAU)
 
